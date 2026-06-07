@@ -849,6 +849,311 @@
       color: rgba(0, 255, 136, 0.3);
       letter-spacing: 0.06em;
     }
+
+    /* ════════════════════════════════════════
+       EMAIL VERIFICATION MODAL
+    ════════════════════════════════════════ */
+    .verify-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.45s ease;
+    }
+
+    .verify-backdrop.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .verify-modal {
+      width: 440px;
+      max-width: 94vw;
+      background: rgba(5, 10, 5, 0.97);
+      border: 1px solid rgba(0, 255, 136, 0.38);
+      border-radius: 20px;
+      padding: 36px 34px 30px;
+      box-shadow: 0 0 60px rgba(0, 255, 136, 0.12), 0 30px 80px rgba(0, 0, 0, 0.8);
+      position: relative;
+      transform: translateY(30px) scale(0.96);
+      transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .verify-backdrop.show .verify-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .verify-modal::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(0, 255, 136, 0.5);
+      border-right: none;
+      border-bottom: none;
+      border-radius: 3px 0 0 0;
+    }
+
+    .verify-modal::after {
+      content: '';
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(0, 255, 136, 0.5);
+      border-left: none;
+      border-top: none;
+      border-radius: 0 0 3px 0;
+    }
+
+    .vm-icon {
+      text-align: center;
+      font-size: 52px;
+      margin-bottom: 14px;
+    }
+
+    .vm-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: #00ff88;
+      text-align: center;
+      text-shadow: 0 0 14px rgba(0, 255, 136, 0.5);
+      margin-bottom: 6px;
+    }
+
+    .vm-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: rgba(0, 255, 136, 0.4);
+      text-align: center;
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+    }
+
+    .vm-email-badge {
+      background: rgba(0, 255, 136, 0.07);
+      border: 1px solid rgba(0, 255, 136, 0.25);
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #00ff88;
+      text-align: center;
+      margin-bottom: 20px;
+      letter-spacing: 0.06em;
+    }
+
+    .vm-email-badge span {
+      color: rgba(0, 255, 136, 0.55);
+      margin-right: 6px;
+    }
+
+    /* Code input boxes */
+    .vm-code-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .vm-code-digit {
+      width: 48px;
+      height: 56px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid rgba(0, 255, 136, 0.25);
+      border-radius: 10px;
+      color: #00ff88;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    .vm-code-digit::-webkit-outer-spin-button,
+    .vm-code-digit::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .vm-code-digit:focus {
+      border-color: rgba(0, 255, 136, 0.75);
+      background: rgba(0, 255, 136, 0.05);
+      box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.10);
+    }
+
+    .vm-code-digit.filled {
+      border-color: rgba(0, 255, 136, 0.55);
+    }
+
+    .vm-code-digit.error {
+      border-color: rgba(255, 59, 59, 0.7);
+      background: rgba(255, 59, 59, 0.05);
+      animation: errShake 0.35s ease;
+    }
+
+    /* Countdown ring */
+    .vm-timer-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .vm-timer-ring {
+      position: relative;
+      width: 64px;
+      height: 64px;
+    }
+
+    .vm-timer-ring svg {
+      transform: rotate(-90deg);
+    }
+
+    .vm-timer-ring circle.track {
+      fill: none;
+      stroke: rgba(0, 255, 136, 0.1);
+      stroke-width: 4;
+    }
+
+    .vm-timer-ring circle.progress {
+      fill: none;
+      stroke: #00ff88;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 175.9;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s linear, stroke 0.5s;
+      filter: drop-shadow(0 0 4px #00ff88);
+    }
+
+    .vm-timer-ring circle.progress.warning {
+      stroke: #ff8c00;
+      filter: drop-shadow(0 0 4px #ff8c00);
+    }
+
+    .vm-timer-num {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px;
+      font-weight: 700;
+      color: #00ff88;
+      transition: color 0.5s;
+    }
+
+    .vm-timer-num.warning {
+      color: #ff8c00;
+    }
+
+    .vm-timer-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: rgba(0, 255, 136, 0.35);
+      letter-spacing: 0.1em;
+    }
+
+    .vm-timer-expired {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #ff4444;
+      text-align: center;
+      letter-spacing: 0.06em;
+    }
+
+    /* Status messages */
+    .vm-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-align: center;
+      min-height: 16px;
+      margin-bottom: 14px;
+      letter-spacing: 0.06em;
+      transition: color 0.3s;
+    }
+
+    .vm-status.ok {
+      color: #00ff88;
+    }
+
+    .vm-status.err {
+      color: #ff4444;
+    }
+
+    .vm-status.info {
+      color: rgba(0, 255, 136, 0.5);
+    }
+
+    /* Buttons */
+    .vm-btn-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .vm-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-transform: uppercase;
+    }
+
+    .vm-btn.primary {
+      background: linear-gradient(135deg, #00ff88, #00cc6a);
+      color: #000;
+    }
+
+    .vm-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 255, 136, 0.35);
+    }
+
+    .vm-btn.primary:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .vm-btn.ghost {
+      background: transparent;
+      border: 1px solid rgba(0, 255, 136, 0.25);
+      color: rgba(0, 255, 136, 0.6);
+    }
+
+    .vm-btn.ghost:hover {
+      border-color: rgba(0, 255, 136, 0.55);
+      color: #00ff88;
+    }
+
+    .vm-btn.ghost:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 
@@ -857,7 +1162,8 @@
   <!-- ══ BOOT SEQUENCE ══════════════════════════════════ -->
   <div class="boot-overlay" id="bootOverlay">
     <div class="boot-logo-wrap">
-      <img src="/static/aau.jpg" class="boot-aau-img" alt="AAU Seal">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSa3UQA99hhU9XkynASmyhZBn5StjS9fEabEg&s"
+        class="boot-aau-img" alt="AAU Seal">
       <div class="boot-title-wrap">
         <div class="boot-title">THREATMAPPER</div>
         <div class="boot-subtitle">AAiT · Cyber Security Lab · v2.0</div>
@@ -917,7 +1223,8 @@
         <div class="composite-logo-wrapper">
           <span class="tm-large-logo">🛡️</span>
           <!-- URL3 is the AAU official red/gold crest image -->
-          <img src="/static/aau.jpg" class="aau-medium-logo" alt="AAU Official Logo">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSa3UQA99hhU9XkynASmyhZBn5StjS9fEabEg&s"
+            class="aau-medium-logo" alt="AAU Official Logo">
         </div>
         <h1>THREATMAPPER</h1>
         <div class="sub-line">Addis Ababa University · Institute of Technology</div>
@@ -972,6 +1279,46 @@
 
   </div><!-- /landing -->
 
+  <!-- ══ EMAIL VERIFICATION MODAL ════════════════════════════ -->
+  <div class="verify-backdrop" id="verifyBackdrop">
+    <div class="verify-modal" id="verifyModal">
+      <div class="vm-icon">📧</div>
+      <div class="vm-title">VERIFY YOUR IDENTITY</div>
+      <div class="vm-sub">A one-time code has been sent to:</div>
+      <div class="vm-email-badge"><span>✉</span>abrehamabebe1921@gmail.com</div>
+
+      <!-- 6-digit input -->
+      <div class="vm-code-wrap" id="codeWrap">
+        <input class="vm-code-digit" id="d0" type="number" min="0" max="9" maxlength="1" inputmode="numeric">
+        <input class="vm-code-digit" id="d1" type="number" min="0" max="9" maxlength="1" inputmode="numeric">
+        <input class="vm-code-digit" id="d2" type="number" min="0" max="9" maxlength="1" inputmode="numeric">
+        <input class="vm-code-digit" id="d3" type="number" min="0" max="9" maxlength="1" inputmode="numeric">
+        <input class="vm-code-digit" id="d4" type="number" min="0" max="9" maxlength="1" inputmode="numeric">
+        <input class="vm-code-digit" id="d5" type="number" min="0" max="9" maxlength="1" inputmode="numeric">
+      </div>
+
+      <!-- Countdown ring -->
+      <div class="vm-timer-wrap">
+        <div class="vm-timer-ring" id="timerRing">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle class="track" cx="32" cy="32" r="28" />
+            <circle class="progress" id="timerCircle" cx="32" cy="32" r="28" />
+          </svg>
+          <div class="vm-timer-num" id="timerNum">30</div>
+        </div>
+        <div class="vm-timer-label">SECONDS REMAINING</div>
+        <div class="vm-timer-expired" id="timerExpired" style="display:none">⏰ Code expired — request a new one</div>
+      </div>
+
+      <div class="vm-status info" id="vmStatus">Sending code to your email…</div>
+
+      <div class="vm-btn-row">
+        <button class="vm-btn ghost" id="vmResendBtn" onclick="startVerificationFlow()" disabled>RESEND</button>
+        <button class="vm-btn primary" id="vmVerifyBtn" onclick="submitOTP()" disabled>VERIFY</button>
+      </div>
+    </div>
+  </div>
+
 
   <script>
     /* ════════════════════════════════════════════════
@@ -1008,16 +1355,303 @@
 
 
     /* ════════════════════════════════════════════════
-       GATE TOGGLE
+       GATE TOGGLE → triggers email verification first
     ════════════════════════════════════════════════ */
-    let isOn = false;
+    let isOn = false;      // true after verification passes
+    let _verifyTimer = null;
+    let _verifyExpired = false;
 
     function toggleLogin() {
-      isOn = !isOn;
-      document.getElementById('landing').classList.toggle('active', isOn);
-      document.getElementById('lampLabel').textContent = isOn ? 'GATE ON ' : 'GATE OFF';
+      if (isOn) {
+        // Already verified — toggle off resets everything
+        isOn = false;
+        document.getElementById('landing').classList.remove('active');
+        document.getElementById('lampLabel').textContent = 'GATE OFF';
+        playClick();
+        return;
+      }
+      // Not yet verified — open the email verification modal
       playClick();
+      openVerifyModal();
     }
+
+    /* ── Verification Modal ──────────────────────── */
+    function openVerifyModal() {
+      resetDigits();
+      document.getElementById('verifyBackdrop').classList.add('show');
+      startVerificationFlow();
+    }
+
+    function closeVerifyModal() {
+      if (_verifyTimer) clearInterval(_verifyTimer);
+      document.getElementById('verifyBackdrop').classList.remove('show');
+    }
+
+    async function startVerificationFlow() {
+      setStatus('info', 'Sending code to your email…');
+      resetDigits();
+      document.getElementById('vmVerifyBtn').disabled = true;
+      document.getElementById('vmResendBtn').disabled = true;
+      document.getElementById('timerExpired').style.display = 'none';
+      _verifyExpired = false;
+
+      try {
+        const res = await fetch('/api/send-verification', { method: 'POST' });
+        const data = await res.json();
+        if (data.status === 'sent') {
+          setStatus('ok', '✓ Code sent! Check your inbox.');
+        } else if (data.status === 'fallback') {
+          // Dev fallback: show code in console
+          console.warn('[DEV] OTP code:', data.code);
+          setStatus('info', '📨 Code ready (check console for dev mode).');
+        } else {
+          setStatus('err', '✗ Failed to send email. Retrying…');
+        }
+      } catch (e) {
+        setStatus('err', '✗ Network error. Please try again.');
+      }
+
+      startCountdown(60);
+      document.getElementById('vmVerifyBtn').disabled = false;
+      // Focus first digit
+      document.getElementById('d0').focus();
+    }
+
+    function startCountdown(seconds) {
+      if (_verifyTimer) clearInterval(_verifyTimer);
+      const circumference = 2 * Math.PI * 28; // ≈ 175.9
+      const circle = document.getElementById('timerCircle');
+      const numEl = document.getElementById('timerNum');
+      let remaining = seconds;
+
+      circle.style.strokeDasharray = circumference;
+      circle.style.strokeDashoffset = 0;
+      numEl.classList.remove('warning');
+      circle.classList.remove('warning');
+
+      _verifyTimer = setInterval(() => {
+        remaining--;
+        const offset = circumference * (1 - remaining / seconds);
+        circle.style.strokeDashoffset = offset;
+        numEl.textContent = remaining;
+
+        if (remaining <= 10) {
+          numEl.classList.add('warning');
+          circle.classList.add('warning');
+        }
+
+        if (remaining <= 0) {
+          clearInterval(_verifyTimer);
+          _verifyExpired = true;
+          document.getElementById('timerExpired').style.display = 'block';
+          document.getElementById('vmVerifyBtn').disabled = true;
+          document.getElementById('vmResendBtn').disabled = false;
+          setStatus('err', '⏰ Code expired. Click RESEND to get a new one.');
+        }
+      }, 1000);
+    }
+
+    async function submitOTP() {
+      if (_verifyExpired) { setStatus('err', '⏰ Code expired — click RESEND.'); return; }
+
+      const digits = ['d0', 'd1', 'd2', 'd3', 'd4', 'd5'].map(id => {
+        const v = document.getElementById(id).value.trim();
+        return v.length ? v[v.length - 1] : '';
+      });
+      const code = digits.join('');
+
+      if (code.length !== 6) {
+        shakeDigits();
+        setStatus('err', '✗ Please enter all 6 digits.');
+        return;
+      }
+
+      document.getElementById('vmVerifyBtn').disabled = true;
+      document.getElementById('vmVerifyBtn').textContent = 'VERIFYING…';
+      setStatus('info', 'Verifying code…');
+
+      try {
+        const res = await fetch('/api/verify-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code })
+        });
+        const data = await res.json();
+
+        if (data.valid) {
+          if (_verifyTimer) clearInterval(_verifyTimer);
+          setStatus('ok', '✓ Identity verified! Opening secure portal…');
+          await new Promise(r => setTimeout(r, 700));
+
+          // Open Access Granted page in new tab
+          const grantedWin = window.open('/access-granted', '_blank');
+
+          // Listen for message from that tab
+          window.addEventListener('message', function onMsg(e) {
+            if (e.data === 'access_granted_done') {
+              window.removeEventListener('message', onMsg);
+              // Close verification modal and reveal login form
+              closeVerifyModal();
+              isOn = true;
+              document.getElementById('landing').classList.add('active');
+              document.getElementById('lampLabel').textContent = 'GATE ON ';
+            }
+          });
+
+          // Fallback: if popup was blocked or closed early
+          setTimeout(() => {
+            if (!grantedWin || grantedWin.closed) {
+              closeVerifyModal();
+              isOn = true;
+              document.getElementById('landing').classList.add('active');
+              document.getElementById('lampLabel').textContent = 'GATE ON ';
+            }
+          }, 4000);
+        } else {
+          shakeDigits();
+          // Show and speak "Permission Denied"
+          showPermissionDenied();
+          setStatus('err', `✗ ${data.reason || 'Incorrect code. Try again.'}`);
+          document.getElementById('vmVerifyBtn').disabled = false;
+          document.getElementById('vmVerifyBtn').textContent = 'VERIFY';
+        }
+      } catch (e) {
+        shakeDigits();
+        setStatus('err', '✗ Network error. Please try again.');
+        document.getElementById('vmVerifyBtn').disabled = false;
+        document.getElementById('vmVerifyBtn').textContent = 'VERIFY';
+      }
+    }
+
+    /* ── Digit input helpers ──────────────────────── */
+    function resetDigits() {
+      ['d0', 'd1', 'd2', 'd3', 'd4', 'd5'].forEach(id => {
+        const el = document.getElementById(id);
+        el.value = '';
+        el.classList.remove('filled', 'error');
+      });
+    }
+
+    function shakeDigits() {
+      ['d0', 'd1', 'd2', 'd3', 'd4', 'd5'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.add('error');
+        setTimeout(() => el.classList.remove('error'), 500);
+      });
+    }
+
+    function setStatus(type, msg) {
+      const el = document.getElementById('vmStatus');
+      el.className = 'vm-status ' + type;
+      el.textContent = msg;
+    }
+
+    /* ── Permission Denied Flash ──────────────────────── */
+    function showPermissionDenied() {
+      // Speak with deep voice
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utt = new SpeechSynthesisUtterance('Permission Denied');
+        utt.pitch = 0;       // lowest pitch (deep)
+        utt.rate = 0.75;    // slower = more ominous
+        utt.volume = 1;
+        // Prefer a deep/male voice if available
+        const voices = window.speechSynthesis.getVoices();
+        const deepVoice = voices.find(v =>
+          /male|deep|bass|david|mark|google uk english male/i.test(v.name)
+        ) || voices[0];
+        if (deepVoice) utt.voice = deepVoice;
+        window.speechSynthesis.speak(utt);
+      }
+
+      // Flash overlay
+      const flash = document.createElement('div');
+      flash.id = 'permDeniedFlash';
+      flash.innerHTML = `
+        <div style="
+          position:fixed;inset:0;z-index:9999;
+          background:rgba(255,0,0,0.88);
+          display:flex;flex-direction:column;
+          align-items:center;justify-content:center;
+          animation:permFlashIn 0.25s ease both;
+          backdrop-filter:blur(6px);
+        ">
+          <div style="font-size:72px;line-height:1;animation:permPulse 0.5s ease-in-out 3">🚫</div>
+          <div style="
+            font-family:'JetBrains Mono',monospace;
+            font-size:clamp(28px,6vw,56px);
+            font-weight:900;
+            letter-spacing:0.18em;
+            color:#fff;
+            text-shadow:0 0 30px rgba(255,0,0,0.9),0 0 60px rgba(255,0,0,0.5);
+            margin:16px 0 8px;
+            text-align:center;
+          ">PERMISSION DENIED</div>
+          <div style="
+            font-family:'JetBrains Mono',monospace;
+            font-size:13px;
+            color:rgba(255,200,200,0.8);
+            letter-spacing:0.2em;
+          ">UNAUTHORIZED ACCESS ATTEMPT</div>
+        </div>
+        <style>
+          @keyframes permFlashIn {
+            from { opacity:0; transform:scale(1.08); }
+            to   { opacity:1; transform:scale(1); }
+          }
+          @keyframes permPulse {
+            0%,100% { transform: scale(1); }
+            50%     { transform: scale(1.2); }
+          }
+        </style>
+      `;
+      document.body.appendChild(flash);
+      setTimeout(() => {
+        flash.style.transition = 'opacity 0.6s ease';
+        flash.style.opacity = '0';
+        setTimeout(() => flash.remove(), 650);
+      }, 2200);
+    }
+
+    /* Wire up digit box auto-advance */
+    document.addEventListener('DOMContentLoaded', () => {
+      const digits = ['d0', 'd1', 'd2', 'd3', 'd4', 'd5'];
+      digits.forEach((id, idx) => {
+        const el = document.getElementById(id);
+        el.addEventListener('input', () => {
+          let v = el.value.replace(/[^0-9]/g, '');
+          if (v.length > 1) v = v[v.length - 1];
+          el.value = v;
+          el.classList.toggle('filled', v.length > 0);
+          if (v.length === 1 && idx < digits.length - 1) {
+            document.getElementById(digits[idx + 1]).focus();
+          }
+          // Enable verify if all 6 filled
+          const allFilled = digits.every(did => document.getElementById(did).value.trim().length === 1);
+          if (!_verifyExpired) document.getElementById('vmVerifyBtn').disabled = !allFilled;
+        });
+        el.addEventListener('keydown', e => {
+          if (e.key === 'Backspace' && !el.value && idx > 0) {
+            document.getElementById(digits[idx - 1]).focus();
+          }
+          if (e.key === 'Enter') submitOTP();
+        });
+        // Paste: distribute 6 digits across inputs
+        el.addEventListener('paste', e => {
+          e.preventDefault();
+          const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
+          digits.forEach((did, i) => {
+            const d = document.getElementById(did);
+            d.value = pasted[i] || '';
+            d.classList.toggle('filled', !!pasted[i]);
+          });
+          const lastFilled = Math.min(pasted.length - 1, digits.length - 1);
+          if (lastFilled >= 0) document.getElementById(digits[lastFilled]).focus();
+          const allFilled = digits.every(did => document.getElementById(did).value.trim().length === 1);
+          if (!_verifyExpired) document.getElementById('vmVerifyBtn').disabled = !allFilled;
+        });
+      });
+    });
 
     /* Synthesized cyber click — no audio file needed */
     function playClick() {

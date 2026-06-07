@@ -14,7 +14,7 @@ new_route = """    return render_template('lab_sqli_medium.html',
 @app.route('/aau/threatmapper/aaulab/sqli/high', methods=['GET', 'POST'])
 @login_required
 def aaulab_sqli_high():
-    flag = 'gtwss{high_level_sqli_success}'
+    flag = 'aau{physics}'
     results = []
     error = None
     flag_output = None

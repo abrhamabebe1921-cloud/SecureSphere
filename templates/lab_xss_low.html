@@ -425,6 +425,65 @@
                 </table>
             </div>
 
+
+            <!-- ONE-CLICK ROLE BUTTONS -->
+            <div style="margin-bottom:30px; text-align: center;">
+                <div
+                    style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;">
+                    ⚡ One-Click Session Creator — Generates unique server-side sessions</div>
+                <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;">
+                    <a href="?quick=Hermela"
+                        style="display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.4);border-radius:10px;color:#ff5555;font-weight:700;font-size:13px;text-decoration:none;transition:all 0.2s;"
+                        onmouseover="this.style.background='rgba(255,50,50,0.2)'"
+                        onmouseout="this.style.background='rgba(255,50,50,0.1)'">
+                        🔑 Create Admin Session (Hermela)
+                        <span
+                            style="font-size:9px;opacity:0.6;background:rgba(0,0,0,0.3);padding:1px 4px;border-radius:3px;">role=Admin</span>
+                    </a>
+                    <a href="?quick=Abreham"
+                        style="display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:rgba(0,255,204,0.08);border:1px solid rgba(0,255,204,0.3);border-radius:10px;color:#00ffcc;font-weight:700;font-size:13px;text-decoration:none;transition:all 0.2s;"
+                        onmouseover="this.style.background='rgba(0,255,204,0.18)'"
+                        onmouseout="this.style.background='rgba(0,255,204,0.08)'">
+                        👤 Create User Session (Abreham)
+                        <span
+                            style="font-size:9px;opacity:0.6;background:rgba(0,0,0,0.3);padding:1px 4px;border-radius:3px;">role=User</span>
+                    </a>
+                </div>
+
+                <!-- Live cookie status -->
+                <div id="xss-cookie-status"
+                    style="margin:0 auto; max-width:480px; font-family:'JetBrains Mono',monospace;font-size:11px;padding:12px 16px;background:rgba(0,0,0,0.4);border-radius:8px;border:1px solid rgba(255,255,255,0.08);color:#555;line-height:1.6;text-align:left;">
+                    Checking browser session status…
+                </div>
+            </div>
+
+            <script>
+                (function () {
+                    function readCookie(n) { var v = document.cookie.match('(^|;)\\s*' + n + '\\s*=\\s*([^;]+)'); return v ? decodeURIComponent(v.pop()) : null; }
+                    function updateXssStatus() {
+                        var el = document.getElementById('xss-cookie-status');
+                        if (!el) return;
+                        var sid = readCookie('XSS_SESSION_ID');
+                        if (sid) {
+                            el.innerHTML = '<span style="color:#00ff88;">●</span> <code style="color:#ffaa00;">XSS_SESSION_ID</code> cookie: <strong style="color:#fff;">' + sid + '</strong><br>'
+                                + '<span style="color:#444; font-size:10px;">This token is mapped server-side to a specific user and role. Access to this cookie allows full account takeover.</span>';
+                        } else {
+                            el.innerHTML = '<span style="color:#444;">○</span> No <code style="color:#888;">XSS_SESSION_ID</code> found. Please create a session above.';
+                        }
+                    }
+                    updateXssStatus();
+                    setInterval(updateXssStatus, 2000);
+                })();
+            </script>
+
+            <div
+                style="display:flex;align-items:center;gap:12px;margin-bottom:25px; max-width: 400px; margin-left: auto; margin-right: auto;">
+                <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
+                <span style="font-size:11px;color:#444;text-transform:uppercase;letter-spacing:1px;">or login
+                    manually</span>
+                <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
+            </div>
+
             {% if error %}
             <div class="error-msg">{{ error }}</div>
             {% endif %}
@@ -439,22 +498,44 @@
                     <label for="password">Password:</label>
                     <input type="password" id="password" name="password" placeholder="Passwd">
                 </div>
-                <button type="submit" style="width: 100%;">Login</button>
+                <button type="submit" style="width: 100%;">Create Session</button>
             </form>
 
             {% else %}
 
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 20px;">
                 <div>
-                    <h3 style="margin: 0 0 5px 0; color: #fff;">Vulnerability Demo</h3>
-                    <div style="font-size:13px; color: #aaa;">Session: <strong style="color:#00ffcc;">{{ logged_in_user
-                            }}</strong></div>
+                    <h3 style="margin: 0 0 5px 0; color: #fff;">XSS Simulation — Active Session</h3>
+                    <div style="font-size:13px; color: #aaa;">Current User: <strong style="color:#00ffcc;">{{
+                            logged_in_user }}</strong></div>
                 </div>
                 <form method="POST" style="margin:0;">
                     <input type="hidden" name="logout" value="1">
-                    <button type="submit" class="btn-logout">Logout</button>
+                    <button type="submit" class="btn-logout" style="padding: 6px 14px; font-size:11px;">Destroy
+                        Session</button>
                 </form>
             </div>
+
+            <!-- ACTIVE COOKIE STATUS IN AUTH VIEW -->
+            <div id="xss-cookie-status-auth"
+                style="margin-bottom:20px; font-family:'JetBrains Mono',monospace;font-size:11px;padding:12px;background:rgba(0,0,0,0.3);border-radius:6px;border:1px solid rgba(0,255,204,0.12);line-height:1.5;">
+                Checking cookies…
+            </div>
+            <script>
+                (function () {
+                    function readCookie(n) { var v = document.cookie.match('(^|;)\\s*' + n + '\\s*=\\s*([^;]+)'); return v ? decodeURIComponent(v.pop()) : null; }
+                    function updateXssStatusAuth() {
+                        var el = document.getElementById('xss-cookie-status-auth');
+                        if (!el) return;
+                        var sid = readCookie('XSS_SESSION_ID');
+                        if (sid) {
+                            el.innerHTML = '<span style="color:#00ff88;">●</span> Opaque Session Token: <code style="color:#ffaa00;">' + sid + '</code><br>'
+                                + '<span style="color:#555; font-size:10px;">Vulnerability: <code>httponly=False</code>. Steal this with: <code>&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code></span>';
+                        }
+                    }
+                    updateXssStatusAuth();
+                })();
+            </script>
 
             <div class="source-block">
                 // Vulnerable backend logic simulation:<br>

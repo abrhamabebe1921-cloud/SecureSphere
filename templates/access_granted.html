@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACCESS GRANTED — ThreatMapper</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #000;
+            font-family: 'JetBrains Mono', monospace;
+            color: #00ff88;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Animated scanlines */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 136, 0.03) 2px,
+                    rgba(0, 255, 136, 0.03) 4px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Particle grid */
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 255, 136, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        /* Shield icon */
+        .shield-wrap {
+            font-size: 100px;
+            line-height: 1;
+            animation: shieldBounce 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+            filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.9));
+        }
+
+        @keyframes shieldBounce {
+            0% {
+                transform: scale(0) rotate(-30deg);
+                opacity: 0;
+            }
+
+            60% {
+                transform: scale(1.15) rotate(5deg);
+                opacity: 1;
+            }
+
+            80% {
+                transform: scale(0.92) rotate(-2deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        /* Main heading */
+        .access-title {
+            font-size: clamp(36px, 8vw, 72px);
+            font-weight: 900;
+            letter-spacing: 0.22em;
+            background: linear-gradient(135deg, #00ff88 0%, #00ffcc 50%, #00ff88 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleReveal 0.8s ease 0.3s both, shimmer 3s linear 1s infinite;
+            text-shadow: none;
+        }
+
+        @keyframes titleReveal {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shimmer {
+            from {
+                background-position: 0% center;
+            }
+
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .access-subtitle {
+            font-size: 14px;
+            color: rgba(0, 255, 136, 0.55);
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            animation: fadeIn 0.6s ease 0.6s both;
+        }
+
+        /* Hexagon status badges */
+        .badges {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeIn 0.6s ease 0.9s both;
+        }
+
+        .badge {
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            border: 1px solid rgba(0, 255, 136, 0.4);
+            color: #00ff88;
+            background: rgba(0, 255, 136, 0.08);
+        }
+
+        .badge.orange {
+            border-color: rgba(255, 140, 0, 0.5);
+            color: #ff8c00;
+            background: rgba(255, 140, 0, 0.08);
+        }
+
+        .badge.blue {
+            border-color: rgba(0, 180, 255, 0.5);
+            color: #00b4ff;
+            background: rgba(0, 180, 255, 0.08);
+        }
+
+        /* Progress bar */
+        .progress-wrap {
+            width: 340px;
+            max-width: 90vw;
+            animation: fadeIn 0.6s ease 1.2s both;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: rgba(0, 255, 136, 0.45);
+            margin-bottom: 6px;
+        }
+
+        .progress-bar-bg {
+            height: 4px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00ffcc);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 8px #00ff88;
+        }
+
+        /* Countdown */
+        .countdown-text {
+            font-size: 12px;
+            color: rgba(0, 255, 136, 0.45);
+            letter-spacing: 0.08em;
+            animation: fadeIn 0.6s ease 1.4s both;
+        }
+
+        .countdown-text span {
+            color: #ff8c00;
+            font-weight: 700;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Glowing ring pulse */
+        .glow-ring {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 255, 136, 0.08);
+            box-shadow: 0 0 60px rgba(0, 255, 136, 0.06), inset 0 0 60px rgba(0, 255, 136, 0.04);
+            animation: ringPulse 2s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes ringPulse {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.06);
+                opacity: 1;
+            }
+        }
+
+        /* Corner brackets */
+        .corner {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-color: rgba(0, 255, 136, 0.3);
+            border-style: solid;
+        }
+
+        .corner.tl {
+            top: 20px;
+            left: 20px;
+            border-width: 2px 0 0 2px;
+        }
+
+        .corner.tr {
+            top: 20px;
+            right: 20px;
+            border-width: 2px 2px 0 0;
+        }
+
+        .corner.bl {
+            bottom: 20px;
+            left: 20px;
+            border-width: 0 0 2px 2px;
+        }
+
+        .corner.br {
+            bottom: 20px;
+            right: 20px;
+            border-width: 0 2px 2px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="grid-overlay"></div>
+    <div class="scanlines"></div>
+    <div class="glow-ring"></div>
+
+    <!-- Corner brackets -->
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <div class="content">
+        <div class="shield-wrap">🛡️</div>
+
+        <div>
+            <div class="access-title">ACCESS GRANTED</div>
+            <div class="access-subtitle">Identity Verified · Secure Session Established</div>
+        </div>
+
+        <div class="badges">
+            <div class="badge">✓ OTP VALIDATED</div>
+            <div class="badge orange">⚡ ADMIN PORTAL</div>
+            <div class="badge blue">🔐 THREATMAPPER</div>
+        </div>
+
+        <div class="progress-wrap">
+            <div class="progress-label">
+                <span>LOADING ADMIN PORTAL</span>
+                <span id="pct">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="countdown-text">
+            Redirecting to admin login in <span id="sec">3</span>s…
+        </div>
+    </div>
+
+    <script>
+        // Animate progress bar + countdown then close
+        let elapsed = 0;
+        const duration = 3000; // 3 seconds
+        const fill = document.getElementById('progressFill');
+        const pct = document.getElementById('pct');
+        const secEl = document.getElementById('sec');
+
+        function speakAccessGranted() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utt = new SpeechSynthesisUtterance('Access Granted');
+                utt.pitch = 0.2;     // low, serious pitch
+                utt.rate = 0.85;     // slightly slower 
+                utt.volume = 1;
+                const voices = window.speechSynthesis.getVoices();
+                const deepVoice = voices.find(v =>
+                    /male|deep|bass|david|mark/i.test(v.name)
+                );
+                if (deepVoice) utt.voice = deepVoice;
+                window.speechSynthesis.speak(utt);
+            }
+        }
+
+        // Initialize voice if voices are loaded, else attach to event
+        if (window.speechSynthesis && speechSynthesis.getVoices().length) {
+            speakAccessGranted();
+        } else if (window.speechSynthesis) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                window.speechSynthesis.onvoiceschanged = null;
+                speakAccessGranted();
+            };
+        }
+
+        const interval = setInterval(() => {
+            elapsed += 50;
+            const progress = Math.min((elapsed / duration) * 100, 100);
+            fill.style.width = progress + '%';
+            pct.textContent = Math.round(progress) + '%';
+            secEl.textContent = Math.max(0, Math.ceil((duration - elapsed) / 1000));
+
+            if (elapsed >= duration) {
+                clearInterval(interval);
+                // Signal parent to open login form
+                if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage('access_granted_done', '*');
+                }
+                window.close();
+            }
+        }, 50);
+    </script>
+</body>
+
+</html>

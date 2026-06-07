@@ -260,7 +260,7 @@
       <div class="source-block">
         // Escaped input, without quotes:<br>
         $id = mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $id);<br>
-        $query = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
+        $query = "SELECT * FROM users WHERE user_id = $id;";
       </div>
 
       <form method="POST">
@@ -289,9 +289,19 @@
         <h3 style="font-size: 14px; color: #aaa; margin-bottom: 12px; text-transform: uppercase;">Query Results</h3>
         {% for r in results %}
         <div class="output-item">
-          ID: {{ user_id }}<br />
-          First name: {{ r.first_name }}<br />
-          Surname: {{ r.last_name }}
+          {% if r.name %}
+          <b>Name:</b> {{ r.name }}<br>
+          <b>Age:</b> {{ r.age }}<br>
+          <b>Email:</b> {{ r.email }}<br>
+          <b>Mobile Number:</b> {{ r.mobile }}<br>
+          <b>ATM Passwd:</b> {{ r.atm_pass }}<br>
+          <b>Bank Account:</b> {{ r.bank_acc }}<br>
+          <b>Amount in Bank:</b> {{ r.amount }}<br>
+          {% else %}
+          {% for k, v in r.items() %}
+             <b>{{ k }}:</b> {{ v }}<br>
+          {% endfor %}
+          {% endif %}
         </div>
         {% endfor %}
       </div>

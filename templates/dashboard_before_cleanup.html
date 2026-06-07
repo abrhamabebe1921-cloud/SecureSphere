@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% include "_base_head.html" %}
 <html lang="en">
 
 <head>
@@ -8,6 +9,31 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <title>Dashboard — ThreatMapper</title>
   <style>
+    /* ── Brand AAU Logo Circle ─────────────────────────── */
+    .brand-aau-logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center;
+      border: 2px solid rgba(0, 255, 136, 0.5);
+      box-shadow: 0 0 14px rgba(0, 255, 136, 0.4), 0 0 28px rgba(0, 255, 136, 0.15);
+      flex-shrink: 0;
+      animation: brandLogoPulse 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes brandLogoPulse {
+      from {
+        box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        border-color: rgba(0, 255, 136, 0.4);
+      }
+
+      to {
+        box-shadow: 0 0 22px rgba(0, 255, 136, 0.7), 0 0 40px rgba(0, 255, 136, 0.25);
+        border-color: rgba(0, 255, 136, 0.8);
+      }
+    }
+
     /* ── Cinematic Background Override ────────────────── */
     body {
       background-color: #050510 !important;
@@ -126,14 +152,14 @@
     }
 
     .kpi-card .kpi-value {
-      font-size: 34px;
-      font-weight: 900;
+      font-size: 28px;
+      font-weight: 700;
       font-family: monospace;
       text-shadow: 0 0 15px currentColor;
     }
 
     .kpi-card .kpi-label {
-      font-size: 12px;
+      font-size: 11px;
       color: rgba(255, 255, 255, 0.7);
       text-transform: uppercase;
       letter-spacing: 0.08em;
@@ -173,15 +199,13 @@
 
     /* ── Section Heading ─────────────────────────────────── */
     .section-title {
-      font-size: 13px;
-      font-family: "JetBrains Mono", monospace;
-      font-weight: 800;
+      font-size: 11px;
+      font-family: monospace;
       text-transform: uppercase;
-      letter-spacing: 0.15em;
-      color: #00ffcc;
-      text-shadow: 0 0 10px rgba(0,255,204,0.3);
-      margin-bottom: 8px;
-      padding-bottom: 8px;
+      letter-spacing: 0.12em;
+      color: #555;
+      margin-bottom: 6px;
+      padding-bottom: 6px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
@@ -193,9 +217,9 @@
     }
 
     .chart-panel {
-      background: linear-gradient(135deg, rgba(0, 255, 136, 0.10) 0%, rgba(0, 0, 0, 0.85) 100%);
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.06) 0%, rgba(0, 0, 0, 0.65) 100%);
       backdrop-filter: blur(20px);
-      border: 2px solid rgba(0, 255, 136, 0.4);
+      border: 1px solid rgba(0, 255, 136, 0.25);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
       border-radius: 16px;
       padding: 16px;
@@ -242,7 +266,7 @@
     }
 
     .log {
-      font-size: 12px;
+      font-size: 11px;
       padding: 5px 6px;
       margin: 3px 0;
       border-radius: 4px;
@@ -274,7 +298,7 @@
     .scanner-panel {
       background: linear-gradient(135deg, rgba(255, 106, 0, 0.08) 0%, rgba(0, 0, 0, 0.7) 100%);
       backdrop-filter: blur(20px);
-      border: 2px solid rgba(255, 106, 0, 0.6);
+      border: 1px solid rgba(255, 106, 0, 0.4);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
       border-radius: 16px;
       overflow: hidden;
@@ -443,7 +467,7 @@
     .findings-table th {
       padding: 10px 14px;
       text-align: left;
-      font-size: 12px;
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: #666;
@@ -463,7 +487,7 @@
       display: inline-block;
       padding: 2px 10px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       font-family: monospace;
     }
@@ -714,8 +738,8 @@
       background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.6) 100%);
       backdrop-filter: blur(14px);
       font-family: var(--font-sans, "Inter", sans-serif);
-      font-size: 12px;
-      font-weight: 800;
+      font-size: 11px;
+      font-weight: 500;
       letter-spacing: 0.04em;
       border: 1px solid rgba(255, 255, 255, 0.04);
       border-left: 3px solid transparent;
@@ -772,7 +796,7 @@
 
     /* ── ChatGPT-Style AI Panel ───────────────────────────── */
     .ai-chat-panel {
-      background: linear-gradient(135deg, rgba(0, 255, 136, 0.12) 0%, rgba(0, 0, 0, 0.85) 100%);
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.08) 0%, rgba(0, 0, 0, 0.7) 100%);
       backdrop-filter: blur(25px);
       border: 1px solid rgba(0, 255, 136, 0.4);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -819,7 +843,7 @@
       color: #00ff88;
       border-radius: 6px;
       padding: 4px 10px;
-      font-size: 12px;
+      font-size: 11px;
       cursor: pointer;
       transition: 0.2s;
       font-family: monospace;
@@ -983,7 +1007,7 @@
       background: none;
       border: none;
       padding: 0;
-      font-size: 12px;
+      font-size: 11px;
       color: #00ff88;
     }
 
@@ -1109,7 +1133,7 @@
       width: 100%;
       padding: 9px 12px;
       background: rgba(0, 0, 0, 0.6);
-      border: 2px solid rgba(0, 255, 136, 0.4);
+      border: 1px solid rgba(0, 255, 136, 0.25);
       border-radius: 10px;
       color: #e0e0e0;
       font-size: 12.5px;
@@ -1173,7 +1197,7 @@
     .users-panel {
       background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(14px);
-      border: 2px solid rgba(0, 255, 136, 0.4);
+      border: 1px solid rgba(0, 255, 136, 0.25);
       box-shadow: 0 0 18px rgba(0, 255, 136, 0.12);
       border-radius: 14px;
       overflow: hidden;
@@ -1207,7 +1231,7 @@
     .users-table th {
       padding: 10px 14px;
       text-align: left;
-      font-size: 12px;
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: #555;
@@ -1305,7 +1329,7 @@
       width: 84px;
       flex-shrink: 0;
       font-family: monospace;
-      font-size: 12px;
+      font-size: 11px;
       color: #444;
       letter-spacing: 0.05em;
     }
@@ -1328,7 +1352,7 @@
       width: 38px;
       text-align: right;
       font-family: monospace;
-      font-size: 12px;
+      font-size: 11px;
       color: #00ff8888;
     }
 
@@ -1365,7 +1389,7 @@
 
     .hc-statusline {
       font-family: monospace;
-      font-size: 12px;
+      font-size: 11px;
       color: #00ff8888;
       white-space: nowrap;
       overflow: hidden;
@@ -1418,7 +1442,7 @@
     }
 
     .lab-desc {
-      font-size: 12px;
+      font-size: 11px;
       color: #555;
       font-family: monospace;
     }
@@ -1587,7 +1611,7 @@
       position: absolute;
       top: -4px;
       right: -4px;
-      font-size: 12px;
+      font-size: 11px;
       background: #ffd700;
       color: #000;
       border: 2px solid #b89600;
@@ -1692,452 +1716,456 @@
   </style>
 </head>
 
-<body>
+<body class="with-sidebar-3d">
+  {% include "_sidebar.html" %}
   <div class="app-layout">
 
     <!-- ── Sidebar ────────────────────────────────────────── -->
-    <aside class="sidebar">
-      <div class="sidebar-brand">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSa3UQA99hhU9XkynASmyhZBn5StjS9fEabEg&s" class="brand-icon" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid rgba(0,255,136,0.3);" alt="AAU">
-        <div>
-          <h2>THREATMAPPER</h2>
-          <span class="version">v2.0 · Security Platform</span>
-        </div>
-      </div>
 
-      <nav class="sidebar-nav">
-        <div class="nav-section">
-          <div class="nav-section-title">Navigation</div>
-          <a href="/dashboard" class="nav-item active">
-            <span class="icon">📊</span> Dashboard
-          </a>
-          {% if perms.scanner %}
-          <button class="nav-item" onclick="document.getElementById('scanPanel').scrollIntoView({behavior:'smooth'})">
-            <span class="icon">🔍</span> Scan Engine
-          </button>
-          {% endif %}
-          {% if perms.reports %}
-          <a href="/reports" class="nav-item">
-            <span class="icon">📋</span> Reports
-          </a>
-          {% endif %}
-          {% if perms.terminal %}
-          <a href="/terminal" class="nav-item">
-            <span class="icon">💻</span> Terminal
-          </a>
-          {% endif %}
-        </div>
-        {% if perms.users %}
-        <div class="nav-section">
-          <div class="nav-section-title">Administration</div>
-          <button class="nav-item" onclick="toggleUsersPanel()">
-            <span class="icon">👥</span> User Management
-          </button>
-        </div>
-        {% endif %}
-        <div class="nav-section">
-          <div class="nav-section-title">Training</div>
-          <button class="nav-item" id="navTrainingBtn" onclick="toggleTrainingPanel()">
-            <span class="icon">🔒</span> Lab Modules
-          </button>
-        </div>
-      </nav>
 
-      <div class="sidebar-footer">
-        <div class="user-info">
-          <div class="user-avatar">{{ username[0]|upper }}</div>
-          <div class="user-details">
-            <div class="name">{{ username }}</div>
-            <span class="role-badge role-{{ role }}">{{ role }}</span>
-          </div>
-        </div>
-        <a href="/logout" class="btn btn-secondary btn-sm" style="width:100%;text-align:center;margin-top:10px;">
-          🚪 Logout
-        </a>
-      </div>
-    </aside>
+    <img src="/static/aau_logo.png" class="brand-aau-logo" alt="Addis Ababa University">
+    <div>
+      <h2>THREATMAPPER</h2>
+      <span class="version">v2.0 · Security Platform</span>
+    </div>
+  </div>
 
-    <!-- ── Top Bar ────────────────────────────────────────── -->
-    <div class="topbar">
-      <div class="topbar-title">
-        <span style="color:#00ffcc;">●</span>&nbsp; Security Operations Dashboard
-      </div>
-      <div class="topbar-actions" style="display:flex;align-items:center;gap:14px;">
-        <span style="font-size:11px;color:#555;font-family:monospace;" id="clockDisplay"></span>
-        <span style="font-size:11px;color:#00ff88;font-family:monospace;">⬤ SYSTEM ONLINE</span>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-title">Navigation</div>
+      <a href="/dashboard" class="nav-item active">
+        <span class="icon">📊</span> Dashboard
+      </a>
+      {% if perms.scanner %}
+      <button class="nav-item" onclick="document.getElementById('scanPanel').scrollIntoView({behavior:'smooth'})">
+        <span class="icon">🔍</span> Scan Engine
+      </button>
+      {% endif %}
+      {% if perms.reports %}
+      <a href="/reports" class="nav-item">
+        <span class="icon">📋</span> Reports
+      </a>
+      {% endif %}
+      {% if perms.terminal %}
+      <a href="/terminal" class="nav-item">
+        <span class="icon">💻</span> Terminal
+      </a>
+      {% endif %}
+    </div>
+    {% if perms.users %}
+    <div class="nav-section">
+      <div class="nav-section-title">Administration</div>
+      <button class="nav-item" onclick="toggleUsersPanel()">
+        <span class="icon">👥</span> User Management
+      </button>
+      <a href="/admin/logs" class="nav-item">
+        <span class="icon">📜</span> Security Event Log
+      </a>
+    </div>
+    {% endif %}
+    <div class="nav-section">
+      <div class="nav-section-title">Training</div>
+      <button class="nav-item" id="navTrainingBtn" onclick="toggleTrainingPanel()">
+        <span class="icon">🔒</span> Lab Modules
+      </button>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar">{{ username[0]|upper }}</div>
+      <div class="user-details">
+        <div class="name">{{ username }}</div>
+        <span class="role-badge role-{{ role }}">{{ role }}</span>
       </div>
     </div>
+    <a href="/logout" class="btn btn-secondary btn-sm" style="width:100%;text-align:center;margin-top:10px;">
+      🚪 Logout
+    </a>
+  </div>
+  </aside>
 
-    <!-- ── Main Content ──────────────────────────────────── -->
-    <div class="main-content" id="mainContent">
-      <div class="dash-grid">
+  <!-- ── Top Bar ────────────────────────────────────────── -->
+  <div class="topbar">
+    <div class="topbar-title">
+      <span style="color:#00ffcc;">●</span>&nbsp; Security Operations Dashboard
+    </div>
+    <div class="topbar-actions" style="display:flex;align-items:center;gap:14px;">
+      <span style="font-size:11px;color:#555;font-family:monospace;" id="clockDisplay"></span>
+      <span style="font-size:11px;color:#00ff88;font-family:monospace;">⬤ SYSTEM ONLINE</span>
+    </div>
+  </div>
 
-        <!-- OWASP 3D Ring – top center -->
-        <div class="owasp-full-row">
-          <div class="section-title" style="text-align:center;">OWASP Top 10 &middot; Vulnerability Ring</div>
-          <div id="owaspSection" class="owasp-scene">
-            <div class="owasp-carousel">
-              {% for vuln in vulns %}
-              <div class="owasp-card">{{ vuln }}</div>
-              {% endfor %}
-            </div>
+  <!-- ── Main Content ──────────────────────────────────── -->
+  <div class="main-content" id="mainContent">
+    <div class="dash-grid">
+
+      <!-- OWASP 3D Ring – top center -->
+      <div class="owasp-full-row">
+        <div class="section-title" style="text-align:center;">OWASP Top 10 &middot; Vulnerability Ring</div>
+        <div id="owaspSection" class="owasp-scene">
+          <div class="owasp-carousel">
+            {% for vuln in vulns %}
+            <div class="owasp-card">{{ vuln }}</div>
+            {% endfor %}
           </div>
         </div>
+      </div>
 
-        <!-- Three-Column Layout -->
-        <div class="dash-cols">
+      <!-- Three-Column Layout -->
+      <div class="dash-cols">
 
-          <!-- ══════════════ LEFT COLUMN ══════════════ -->
-          <div class="dash-col-left">
+        <!-- ══════════════ LEFT COLUMN ══════════════ -->
+        <div class="dash-col-left">
 
-            <!-- Hacker Status Console -->
-            <div class="hacker-console">
-              <div class="hc-header">
-                <span class="hc-dot red"></span>
-                <span class="hc-dot yellow"></span>
-                <span class="hc-dot green"></span>
-                <span class="hc-title">root@threatmapper:~$</span>
-                <span class="hc-blink">&#x2588;</span>
+          <!-- Hacker Status Console -->
+          <div class="hacker-console">
+            <div class="hc-header">
+              <span class="hc-dot red"></span>
+              <span class="hc-dot yellow"></span>
+              <span class="hc-dot green"></span>
+              <span class="hc-title">root@threatmapper:~$</span>
+              <span class="hc-blink">&#x2588;</span>
+            </div>
+            <div class="hc-body">
+
+              <!-- Live gauge rows -->
+              <div class="hc-row">
+                <span class="hc-key">CPU_LOAD</span>
+                <div class="hc-bar-wrap">
+                  <div class="hc-bar" id="barCpu" style="width:0%;background:linear-gradient(90deg,#00ff88,#00cc66);">
+                  </div>
+                </div>
+                <span class="hc-val" id="valCpu">0%</span>
               </div>
-              <div class="hc-body">
 
-                <!-- Live gauge rows -->
-                <div class="hc-row">
-                  <span class="hc-key">CPU_LOAD</span>
-                  <div class="hc-bar-wrap">
-                    <div class="hc-bar" id="barCpu" style="width:0%;background:linear-gradient(90deg,#00ff88,#00cc66);">
-                    </div>
-                  </div>
-                  <span class="hc-val" id="valCpu">0%</span>
-                </div>
-
-                <div class="hc-row">
-                  <span class="hc-key">MEM_USAGE</span>
-                  <div class="hc-bar-wrap">
-                    <div class="hc-bar" id="barMem" style="width:0%;background:linear-gradient(90deg,#ff6a00,#cc5200);">
-                    </div>
-                  </div>
-                  <span class="hc-val" id="valMem">0%</span>
-                </div>
-
-                <div class="hc-row">
-                  <span class="hc-key">DISK_IO__</span>
-                  <div class="hc-bar-wrap">
-                    <div class="hc-bar" id="barDisk"
-                      style="width:0%;background:linear-gradient(90deg,#7c3aed,#5b21b6);"></div>
-                  </div>
-                  <span class="hc-val" id="valDisk">0%</span>
-                </div>
-
-                <!-- Scan/status counters -->
-                <div class="hc-divider"></div>
-
-                <div class="hc-counters">
-                  <div class="hc-counter">
-                    <div class="hc-counter-val" id="statScans" style="color:#00ffcc;">—</div>
-                    <div class="hc-counter-key">SCANS</div>
-                  </div>
-                  <div class="hc-counter">
-                    <div class="hc-counter-val" id="statCritical" style="color:#ff1744;">—</div>
-                    <div class="hc-counter-key">CRITICAL</div>
-                  </div>
-                  <div class="hc-counter">
-                    <div class="hc-counter-val" id="statHigh" style="color:#ff6a00;">—</div>
-                    <div class="hc-counter-key">HIGH</div>
-                  </div>
-                  <div class="hc-counter">
-                    <div class="hc-counter-val" id="statMedium" style="color:#ffcc00;">—</div>
-                    <div class="hc-counter-key">MEDIUM</div>
-                  </div>
-                  <div class="hc-counter">
-                    <div class="hc-counter-val" id="statUsers" style="color:#7c3aed;">—</div>
-                    <div class="hc-counter-key">USERS</div>
+              <div class="hc-row">
+                <span class="hc-key">MEM_USAGE</span>
+                <div class="hc-bar-wrap">
+                  <div class="hc-bar" id="barMem" style="width:0%;background:linear-gradient(90deg,#ff6a00,#cc5200);">
                   </div>
                 </div>
+                <span class="hc-val" id="valMem">0%</span>
+              </div>
 
-                <!-- Animated status line -->
-                <div class="hc-divider"></div>
-                <div class="hc-statusline" id="hcStatusLine">&gt; SYSTEM NOMINAL &mdash; ALL MODULES ACTIVE</div>
+              <div class="hc-row">
+                <span class="hc-key">DISK_IO__</span>
+                <div class="hc-bar-wrap">
+                  <div class="hc-bar" id="barDisk" style="width:0%;background:linear-gradient(90deg,#7c3aed,#5b21b6);">
+                  </div>
+                </div>
+                <span class="hc-val" id="valDisk">0%</span>
+              </div>
 
+              <!-- Scan/status counters -->
+              <div class="hc-divider"></div>
+
+              <div class="hc-counters">
+                <div class="hc-counter">
+                  <div class="hc-counter-val" id="statScans" style="color:#00ffcc;">—</div>
+                  <div class="hc-counter-key">SCANS</div>
+                </div>
+                <div class="hc-counter">
+                  <div class="hc-counter-val" id="statCritical" style="color:#ff1744;">—</div>
+                  <div class="hc-counter-key">CRITICAL</div>
+                </div>
+                <div class="hc-counter">
+                  <div class="hc-counter-val" id="statHigh" style="color:#ff6a00;">—</div>
+                  <div class="hc-counter-key">HIGH</div>
+                </div>
+                <div class="hc-counter">
+                  <div class="hc-counter-val" id="statMedium" style="color:#ffcc00;">—</div>
+                  <div class="hc-counter-key">MEDIUM</div>
+                </div>
+                <div class="hc-counter">
+                  <div class="hc-counter-val" id="statUsers" style="color:#7c3aed;">—</div>
+                  <div class="hc-counter-key">USERS</div>
+                </div>
+              </div>
+
+              <!-- Animated status line -->
+              <div class="hc-divider"></div>
+              <div class="hc-statusline" id="hcStatusLine">&gt; SYSTEM NOMINAL &mdash; ALL MODULES ACTIVE</div>
+
+            </div>
+          </div>
+
+          <!-- Live Charts -->
+          <div>
+            <div class="section-title">&#9547; SYS MONITOR</div>
+            <div class="soc-charts">
+              <div class="chart-panel" style="border-color:rgba(0,255,136,0.2);">
+                <h4 style="color:#00ff88;">&#9608; CPU &amp; MEMORY</h4>
+                <canvas id="sysChart" height="90"></canvas>
+              </div>
+              <div class="chart-panel" style="border-color:rgba(0,255,200,0.2);">
+                <h4 style="color:#00ffcc;">&#9608; NETWORK I/O</h4>
+                <canvas id="netChart" height="90"></canvas>
               </div>
             </div>
+          </div>
 
-            <!-- Live Charts -->
-            <div>
-              <div class="section-title">&#9547; SYS MONITOR</div>
-              <div class="soc-charts">
-                <div class="chart-panel" style="border-color:rgba(0,255,136,0.2);">
-                  <h4 style="color:#00ff88;">&#9608; CPU &amp; MEMORY</h4>
-                  <canvas id="sysChart" height="90"></canvas>
-                </div>
-                <div class="chart-panel" style="border-color:rgba(0,255,200,0.2);">
-                  <h4 style="color:#00ffcc;">&#9608; NETWORK I/O</h4>
-                  <canvas id="netChart" height="90"></canvas>
-                </div>
+          <!-- Scanner -->
+          {% if perms.scanner %}
+          <div id="scanPanel">
+            <div class="section-title">Scan Engine</div>
+            <div class="scanner-panel">
+              <div class="scanner-header">
+                <h3>⚡ Vulnerability Scanner</h3>
+                <div id="scanStatus" style="font-size:11px;font-family:monospace;color:#00ff88;">● Ready</div>
               </div>
-            </div>
+              <div class="scanner-body">
 
-            <!-- Scanner -->
-            {% if perms.scanner %}
-            <div id="scanPanel">
-              <div class="section-title">Scan Engine</div>
-              <div class="scanner-panel">
-                <div class="scanner-header">
-                  <h3>⚡ Vulnerability Scanner</h3>
-                  <div id="scanStatus" style="font-size:11px;font-family:monospace;color:#00ff88;">● Ready</div>
-                </div>
-                <div class="scanner-body">
+                <!-- ── Target Mode Tabs ── -->
 
-                  <!-- ── Target Mode Tabs ── -->
-
-                  <div style="display:flex;gap:6px;margin-bottom:10px;">
-                    <button id="tabDomain" onclick="setScanTab('domain')" style="flex:1;padding:6px 10px;border-radius:7px;border:1px solid rgba(0,255,200,0.45);
+                <div style="display:flex;gap:6px;margin-bottom:10px;">
+                  <button id="tabDomain" onclick="setScanTab('domain')" style="flex:1;padding:6px 10px;border-radius:7px;border:1px solid rgba(0,255,200,0.45);
                              background:rgba(0,255,200,0.12);color:#00ffcc;font-family:monospace;
                              font-size:11px;font-weight:700;cursor:pointer;transition:0.2s;">
-                      🌐 Domain
-                    </button>
-                    <button id="tabFile" onclick="setScanTab('file')" style="flex:1;padding:6px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.1);
+                    🌐 Domain
+                  </button>
+                  <button id="tabFile" onclick="setScanTab('file')" style="flex:1;padding:6px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.1);
                              background:rgba(255,255,255,0.04);color:#888;font-family:monospace;
                              font-size:11px;font-weight:700;cursor:pointer;transition:0.2s;">
-                      📄 Subdomains
-                    </button>
-                    <button id="tabSource" onclick="setScanTab('source')" style="flex:1;padding:6px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.1);
+                    📄 Subdomains
+                  </button>
+                  <button id="tabSource" onclick="setScanTab('source')" style="flex:1;padding:6px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.1);
                              background:rgba(255,255,255,0.04);color:#888;font-family:monospace;
                              font-size:11px;font-weight:700;cursor:pointer;transition:0.2s;">
-                      💻 Source Code
-                    </button>
-                  </div>
+                    💻 Source Code
+                  </button>
+                </div>
 
-                  <!-- Mode 1: Domain / wildcard -->
-                  <div id="modeDomain">
-                    <input type="text" id="scanTarget" placeholder="e.g.  *.aau.edu.et  or  aau.edu.et"
-                      style="width:100%;margin-bottom:8px;font-family:monospace;font-size:12px;">
-                    <div style="font-size:10px;color:#555;font-family:monospace;margin-top:-4px;margin-bottom:8px;">
-                      Use <code style="color:#00ffcc;">*.domain.com</code> to scan all subdomains automatically.
-                    </div>
+                <!-- Mode 1: Domain / wildcard -->
+                <div id="modeDomain">
+                  <input type="text" id="scanTarget" placeholder="e.g.  *.aau.edu.et  or  aau.edu.et"
+                    style="width:100%;margin-bottom:8px;font-family:monospace;font-size:12px;">
+                  <div style="font-size:10px;color:#555;font-family:monospace;margin-top:-4px;margin-bottom:8px;">
+                    Use <code style="color:#00ffcc;">*.domain.com</code> to scan all subdomains automatically.
                   </div>
+                </div>
 
-                  <!-- Mode 2: .txt file upload -->
-                  <div id="modeFile" style="display:none;">
-                    <label style="display:block;margin-bottom:5px;font-size:11px;color:#aaa;font-family:monospace;">
-                      Upload a <code style="color:#00ffcc;">.txt</code> file — one subdomain per line:
-                    </label>
-                    <input type="file" id="subdomainFile" accept=".txt" onchange="previewSubdomainFile(this)" style="width:100%;padding:6px 8px;background:rgba(0,255,200,0.06);
+                <!-- Mode 2: .txt file upload -->
+                <div id="modeFile" style="display:none;">
+                  <label style="display:block;margin-bottom:5px;font-size:11px;color:#aaa;font-family:monospace;">
+                    Upload a <code style="color:#00ffcc;">.txt</code> file — one subdomain per line:
+                  </label>
+                  <input type="file" id="subdomainFile" accept=".txt" onchange="previewSubdomainFile(this)" style="width:100%;padding:6px 8px;background:rgba(0,255,200,0.06);
                              border:1px dashed rgba(0,255,200,0.35);border-radius:7px;
                              color:#ccc;font-family:monospace;font-size:11px;cursor:pointer;
                              margin-bottom:6px;">
-                    <div id="subdomainFilePreview"
-                      style="font-size:10px;color:#555;font-family:monospace;min-height:16px;"></div>
-                  </div>
+                  <div id="subdomainFilePreview"
+                    style="font-size:10px;color:#555;font-family:monospace;min-height:16px;"></div>
+                </div>
 
-                  <!-- Mode 3: Source Code SAST -->
-                  <div id="modeSource" style="display:none; margin-bottom:8px;">
-                    <textarea id="sourceCodeInput" placeholder="Paste PHP/Python source code here for SAST analysis..."
-                      style="width:100%;height:80px;background:rgba(0,0,0,0.5);border:1px solid #444;color:#00ffcc;font-family:monospace;font-size:11px;padding:8px;border-radius:6px;resize:vertical;"></textarea>
-                  </div>
+                <!-- Mode 3: Source Code SAST -->
+                <div id="modeSource" style="display:none; margin-bottom:8px;">
+                  <textarea id="sourceCodeInput" placeholder="Paste PHP/Python source code here for SAST analysis..."
+                    style="width:100%;height:80px;background:rgba(0,0,0,0.5);border:1px solid #444;color:#00ffcc;font-family:monospace;font-size:11px;padding:8px;border-radius:6px;resize:vertical;"></textarea>
+                </div>
 
-                  <!-- Controls row -->
-                  <div class="scan-row" style="margin-top:6px;">
-                    <select id="scanType">
-                      <option value="full">Deep Simulation</option>
-                    </select>
+                <!-- Controls row -->
+                <div class="scan-row" style="margin-top:6px;">
+                  <select id="scanType">
+                    <option value="full">Deep Simulation</option>
+                  </select>
 
-                    <div class="speed-control">
-                      <label for="scanSpeed">Req/s:</label>
-                      <input type="range" id="scanSpeed" min="1" max="1000" value="10"
-                        oninput="document.getElementById('speedVal').innerText=this.value"
-                        style="width:80px;accent-color:#00ffcc;cursor:pointer;">
-                      <span id="speedVal">10</span>
-                    </div>
-                    <button class="btn btn-primary" onclick="startScan()" id="scanBtn">⚡ Start Scan</button>
+                  <div class="speed-control">
+                    <label for="scanSpeed">Req/s:</label>
+                    <input type="range" id="scanSpeed" min="1" max="1000" value="10"
+                      oninput="document.getElementById('speedVal').innerText=this.value"
+                      style="width:80px;accent-color:#00ffcc;cursor:pointer;">
+                    <span id="speedVal">10</span>
                   </div>
-                  <div id="scanProgress" style="display:none; margin-top:20px; text-align:center;">
-                    <div
-                      style="font-size:12px; font-family:monospace; color:#888; margin-bottom:10px; letter-spacing:1px;">
-                      SCAN PROGRESS</div>
-                    <div style="position:relative; width:120px; height:120px; margin:0 auto;">
-                      <svg viewBox="0 0 100 100" style="width:120px; height:120px; transform: rotate(-90deg);">
-                        <defs>
-                          <linearGradient id="scanGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#00ffcc" />
-                            <stop offset="100%" stop-color="#00ff88" />
-                          </linearGradient>
-                        </defs>
-                        <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8">
-                        </circle>
-                        <circle id="scanProgressCircle" cx="50" cy="50" r="42" fill="none" stroke="url(#scanGrad)"
-                          stroke-width="8" stroke-dasharray="263.89" stroke-dashoffset="263.89" stroke-linecap="round"
-                          style="transition: stroke-dashoffset 0.3s ease; filter: drop-shadow(0 0 6px rgba(0,255,136,0.6));">
-                        </circle>
-                      </svg>
-                      <div id="scanPctLabel"
-                        style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-family:monospace; font-size:20px; font-weight:700; color:#00ff88; text-shadow:0 0 10px rgba(0,255,136,0.5);">
-                        0%</div>
-                    </div>
+                  <button class="btn btn-primary" onclick="startScan()" id="scanBtn">⚡ Start Scan</button>
+                </div>
+                <div id="scanProgress" style="display:none; margin-top:20px; text-align:center;">
+                  <div
+                    style="font-size:12px; font-family:monospace; color:#888; margin-bottom:10px; letter-spacing:1px;">
+                    SCAN PROGRESS</div>
+                  <div style="position:relative; width:120px; height:120px; margin:0 auto;">
+                    <svg viewBox="0 0 100 100" style="width:120px; height:120px; transform: rotate(-90deg);">
+                      <defs>
+                        <linearGradient id="scanGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" stop-color="#00ffcc" />
+                          <stop offset="100%" stop-color="#00ff88" />
+                        </linearGradient>
+                      </defs>
+                      <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8">
+                      </circle>
+                      <circle id="scanProgressCircle" cx="50" cy="50" r="42" fill="none" stroke="url(#scanGrad)"
+                        stroke-width="8" stroke-dasharray="263.89" stroke-dashoffset="263.89" stroke-linecap="round"
+                        style="transition: stroke-dashoffset 0.3s ease; filter: drop-shadow(0 0 6px rgba(0,255,136,0.6));">
+                      </circle>
+                    </svg>
+                    <div id="scanPctLabel"
+                      style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-family:monospace; font-size:20px; font-weight:700; color:#00ff88; text-shadow:0 0 10px rgba(0,255,136,0.5);">
+                      0%</div>
                   </div>
-                  <div class="terminal">
-                    <div class="scanline"></div>
-                    <div id="scanOutput">
-                    </div>
+                </div>
+                <div class="terminal">
+                  <div class="scanline"></div>
+                  <div id="scanOutput">
                   </div>
                 </div>
               </div>
             </div>
-            {% endif %}
+          </div>
+          {% endif %}
 
-            <!-- Findings -->
-            <div id="findingsSection" style="display:none;">
-              <div class="section-title">Scan Results</div>
-              <div class="findings-panel">
-                <div class="findings-header">
-                  <h3>🎯 Findings</h3>
-                  <button class="btn btn-secondary btn-sm" onclick="exportPDF()">📄 Export PDF</button>
-                </div>
-                <div class="findings-table-wrap">
-                  <table class="findings-table" id="findingsTable">
-                    <thead>
-                      <tr>
-                        <th>Host</th>
-                        <th>Issue</th>
-                        <th>Severity</th>
-                        <th>CVSS</th>
-                        <th>OWASP</th>
-                      </tr>
-                    </thead>
-                    <tbody id="findingsBody"></tbody>
-                  </table>
-                </div>
+          <!-- Findings -->
+          <div id="findingsSection" style="display:none;">
+            <div class="section-title">Scan Results</div>
+            <div class="findings-panel">
+              <div class="findings-header">
+                <h3>🎯 Findings</h3>
+                <button class="btn btn-secondary btn-sm" onclick="exportPDF()">📄 Export PDF</button>
               </div>
-            </div>
-
-            <!-- Users Panel -->
-            {% if perms.users %}
-            <div id="usersPanel" style="display:none;">
-              <div class="section-title">Administration</div>
-              <div class="users-panel">
-                <div class="users-header">
-                  <h3>👥 User Management</h3>
-                  <button class="btn btn-primary btn-sm" onclick="showAddUserModal()">+ Add User</button>
-                </div>
-                <table class="users-table">
+              <div class="findings-table-wrap">
+                <table class="findings-table" id="findingsTable">
                   <thead>
                     <tr>
-                      <th>Username</th>
-                      <th>Email</th>
-                      <th>Role</th>
-                      <th>Created</th>
-                      <th>Actions</th>
+                      <th>Host</th>
+                      <th>Issue</th>
+                      <th>Severity</th>
+                      <th>CVSS</th>
+                      <th>OWASP</th>
                     </tr>
                   </thead>
-                  <tbody id="usersBody"></tbody>
+                  <tbody id="findingsBody"></tbody>
                 </table>
               </div>
             </div>
-            {% endif %}
-
           </div>
 
-          <!-- ══════════════ MIDDLE COLUMN ══════════════ -->
-          <div class="dash-col-mid">
-
-            <!-- Lab Panel (nav toggle only – hidden from UI) -->
-            <div id="labSection" style="display:none;">
-              <div class="section-title">🔒 Interactive Lab Modules</div>
-              <div class="lab-grid-wrap">
-                <div class="lab-card orange">SQL Injection Lab</div>
-                <div class="lab-card orange">XSS Training</div>
-                <div class="lab-card orange">CSRF Simulation</div>
-                <div class="lab-card green">IDOR Exploitation</div>
-                <div class="lab-card green">Auth Bypass</div>
-                <div class="lab-card red">SSRF Attack Model</div>
-                <div class="lab-card red">RCE Lab</div>
-                <div class="lab-card red">LFI / Path Traversal</div>
+          <!-- Users Panel -->
+          {% if perms.users %}
+          <div id="usersPanel" style="display:none;">
+            <div class="section-title">Administration</div>
+            <div class="users-panel">
+              <div class="users-header">
+                <h3>👥 User Management</h3>
+                <button class="btn btn-primary btn-sm" onclick="showAddUserModal()">+ Add User</button>
               </div>
-            </div>
-
-          </div>
-
-          <!-- ════════════════════ RIGHT COLUMN — AI Chat ════════════════════ -->
-          <div class="dash-col-right">
-            <div style="display:flex; flex-direction:column; height:100%;">
-              <div class="section-title" style="flex-shrink:0;">🤖 ThreatMapper AI Assistant</div>
-
-              <!-- Full ChatGPT-Style Chat Panel -->
-              <div class="ai-chat-panel" id="aiChatPanel">
-
-                <!-- Header -->
-                <div class="ai-chat-header">
-                  <div class="ai-online-dot"></div>
-                  <h3>🤖 ThreatMapper AI</h3>
-                  <span class="ai-model-badge" id="aiModelBadge">LLaMA 3.1 · FREE</span>
-                  <button class="ai-new-chat-btn" onclick="startNewChat()" title="New conversation (Ctrl+Shift+N)">＋ New
-                    Chat</button>
-                </div>
-
-                <!-- Quick suggestion chips -->
-                <div class="ai-suggestions" id="aiSuggestions">
-                  <span class="ai-suggestion-chip" onclick="sendSuggestion(this)">What is SQL Injection?</span>
-                  <span class="ai-suggestion-chip" onclick="sendSuggestion(this)">Explain OWASP Top 10</span>
-                  <span class="ai-suggestion-chip" onclick="sendSuggestion(this)">How to fix XSS?</span>
-                  <span class="ai-suggestion-chip" onclick="sendSuggestion(this)">CVSS scoring guide</span>
-                  <span class="ai-suggestion-chip" onclick="sendSuggestion(this)">What is a buffer overflow?</span>
-                  <span class="ai-suggestion-chip" onclick="sendSuggestion(this)">Explain zero-day exploits</span>
-                </div>
-
-                <!-- Messages -->
-                <div class="ai-messages" id="aiMessages">
-                  <!-- Welcome message -->
-                  <div class="ai-msg-group">
-                    <div class="ai-msg-role ai-role">🤖 ThreatMapper AI</div>
-                    <div class="ai-message assistant" id="aiWelcomeMsg">
-                      <strong>Hello! I'm ThreatMapper AI.</strong> 👋<br><br>
-                      I can answer <strong>any question</strong> — cybersecurity, coding, science, math, or general
-                      knowledge.<br><br>
-                      • Ask about <strong>vulnerabilities</strong> (SQLi, XSS, SSRF, RCE...)<br>
-                      • Get <strong>remediation steps</strong> and OWASP guidance<br>
-                      • Continue the conversation — I <strong>remember context</strong>!<br><br>
-                      <em style="color:#555; font-size:11px;">Tip: Press <kbd
-                          style="background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.2);border-radius:3px;padding:1px 4px;">Enter</kbd>
-                        to send, <kbd
-                          style="background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.2);border-radius:3px;padding:1px 4px;">Shift+Enter</kbd>
-                        for new line</em>
-                    </div>
-                  </div>
-
-                  <!-- Typing indicator -->
-                  <div class="ai-typing" id="aiTyping">
-                    <div class="ai-typing-dot"></div>
-                    <div class="ai-typing-dot"></div>
-                    <div class="ai-typing-dot"></div>
-                  </div>
-                </div>
-
-                <!-- Turn label -->
-                <div class="ai-turn-label" id="aiTurnLabel">New conversation · 0 messages</div>
-
-                <!-- Input -->
-                <div class="ai-input-row">
-                  <div class="ai-textarea-wrap">
-                    <textarea id="aiInput" placeholder="Ask anything…" rows="1" onkeydown="handleAiKey(event)"
-                      oninput="autoResizeAiInput(this)"></textarea>
-                  </div>
-                  <button class="ai-send-btn" id="aiSendBtn" onclick="sendAiMessage()" title="Send (Enter)">
-                    ➤
-                  </button>
-                </div>
-                <div class="ai-hint">Enter to send · Shift+Enter for newline · Ctrl+Shift+N for new chat</div>
-
-              </div>
+              <table class="users-table">
+                <thead>
+                  <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="usersBody"></tbody>
+              </table>
             </div>
           </div>
-
+          {% endif %}
 
         </div>
-      </div>
 
-      <!-- ── Lab Modules Modal ───────────────────────────── -->
-      <div id="labModal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeLabModal()">
-        <div style="
+        <!-- ══════════════ MIDDLE COLUMN ══════════════ -->
+        <div class="dash-col-mid">
+
+          <!-- Lab Panel (nav toggle only – hidden from UI) -->
+          <div id="labSection" style="display:none;">
+            <div class="section-title">🔒 Interactive Lab Modules</div>
+            <div class="lab-grid-wrap">
+              <div class="lab-card orange">SQL Injection Lab</div>
+              <div class="lab-card orange">XSS Training</div>
+              <div class="lab-card orange">CSRF Simulation</div>
+              <div class="lab-card green">IDOR Exploitation</div>
+              <div class="lab-card green">Auth Bypass</div>
+              <div class="lab-card red">SSRF Attack Model</div>
+              <div class="lab-card red">RCE Lab</div>
+              <div class="lab-card red">LFI / Path Traversal</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ════════════════════ RIGHT COLUMN — AI Chat ════════════════════ -->
+        <div class="dash-col-right">
+          <div style="display:flex; flex-direction:column; height:100%;">
+            <div class="section-title" style="flex-shrink:0;">🤖 ThreatMapper AI Assistant</div>
+
+            <!-- Full ChatGPT-Style Chat Panel -->
+            <div class="ai-chat-panel" id="aiChatPanel">
+
+              <!-- Header -->
+              <div class="ai-chat-header">
+                <div class="ai-online-dot"></div>
+                <h3>🤖 ThreatMapper AI</h3>
+                <span class="ai-model-badge" id="aiModelBadge">LLaMA 3.1 · FREE</span>
+                <button class="ai-new-chat-btn" onclick="startNewChat()" title="New conversation (Ctrl+Shift+N)">＋ New
+                  Chat</button>
+              </div>
+
+              <!-- Quick suggestion chips -->
+              <div class="ai-suggestions" id="aiSuggestions">
+                <span class="ai-suggestion-chip" onclick="sendSuggestion(this)">What is SQL Injection?</span>
+                <span class="ai-suggestion-chip" onclick="sendSuggestion(this)">Explain OWASP Top 10</span>
+                <span class="ai-suggestion-chip" onclick="sendSuggestion(this)">How to fix XSS?</span>
+                <span class="ai-suggestion-chip" onclick="sendSuggestion(this)">CVSS scoring guide</span>
+                <span class="ai-suggestion-chip" onclick="sendSuggestion(this)">What is a buffer overflow?</span>
+                <span class="ai-suggestion-chip" onclick="sendSuggestion(this)">Explain zero-day exploits</span>
+              </div>
+
+              <!-- Messages -->
+              <div class="ai-messages" id="aiMessages">
+                <!-- Welcome message -->
+                <div class="ai-msg-group">
+                  <div class="ai-msg-role ai-role">🤖 ThreatMapper AI</div>
+                  <div class="ai-message assistant" id="aiWelcomeMsg">
+                    <strong>Hello! I'm ThreatMapper AI.</strong> 👋<br><br>
+                    I can answer <strong>any question</strong> — cybersecurity, coding, science, math, or general
+                    knowledge.<br><br>
+                    • Ask about <strong>vulnerabilities</strong> (SQLi, XSS, SSRF, RCE...)<br>
+                    • Get <strong>remediation steps</strong> and OWASP guidance<br>
+                    • Continue the conversation — I <strong>remember context</strong>!<br><br>
+                    <em style="color:#555; font-size:11px;">Tip: Press <kbd
+                        style="background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.2);border-radius:3px;padding:1px 4px;">Enter</kbd>
+                      to send, <kbd
+                        style="background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.2);border-radius:3px;padding:1px 4px;">Shift+Enter</kbd>
+                      for new line</em>
+                  </div>
+                </div>
+
+                <!-- Typing indicator -->
+                <div class="ai-typing" id="aiTyping">
+                  <div class="ai-typing-dot"></div>
+                  <div class="ai-typing-dot"></div>
+                  <div class="ai-typing-dot"></div>
+                </div>
+              </div>
+
+              <!-- Turn label -->
+              <div class="ai-turn-label" id="aiTurnLabel">New conversation · 0 messages</div>
+
+              <!-- Input -->
+              <div class="ai-input-row">
+                <div class="ai-textarea-wrap">
+                  <textarea id="aiInput" placeholder="Ask anything…" rows="1" onkeydown="handleAiKey(event)"
+                    oninput="autoResizeAiInput(this)"></textarea>
+                </div>
+                <button class="ai-send-btn" id="aiSendBtn" onclick="sendAiMessage()" title="Send (Enter)">
+                  ➤
+                </button>
+              </div>
+              <div class="ai-hint">Enter to send · Shift+Enter for newline · Ctrl+Shift+N for new chat</div>
+
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+
+    <!-- ── Lab Modules Modal ───────────────────────────── -->
+    <div id="labModal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeLabModal()">
+      <div style="
           background: rgba(10,10,10,0.95);
           backdrop-filter: blur(20px);
           border: 1px solid rgba(0,255,200,0.2);
@@ -2149,13 +2177,13 @@
           box-shadow: 0 0 60px rgba(0,255,200,0.12), 0 30px 80px rgba(0,0,0,0.8);
           animation: modalIn 0.3s ease;
         ">
-          <!-- Modal Header -->
-          <div style="
+        <!-- Modal Header -->
+        <div style="
             display: flex; align-items: center; gap: 12px;
             padding: 20px 24px;
             border-bottom: 1px solid rgba(255,255,255,0.06);
           ">
-            <button onclick="closeLabModal()" style="
+          <button onclick="closeLabModal()" style="
               background: rgba(255,255,255,0.06);
               border: 1px solid rgba(255,255,255,0.1);
               border-radius: 8px;
@@ -2165,87 +2193,86 @@
               font-size: 16px;
               transition: 0.2s;
             " onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#aaa'">&larr;</button>
-            <div>
-              <div style="font-size:16px; font-weight:600; color:#fff;">🔒 Lab Modules</div>
-              <div style="font-size:11px; color:#555; font-family:monospace; margin-top:2px;">Vulnerability training
-                labs &mdash; work in progress</div>
-            </div>
+          <div>
+            <div style="font-size:16px; font-weight:600; color:#fff;">🔒 Lab Modules</div>
+            <div style="font-size:11px; color:#555; font-family:monospace; margin-top:2px;">Vulnerability training
+              labs &mdash; work in progress</div>
+          </div>
+        </div>
+
+        <!-- Isometric 3D Vulnerability Grid -->
+        <div class="vuln-3d-grid" id="labModulesList">
+
+          <div class="vuln-3d-card" data-vuln="SQL Injection" data-size="small"
+            onclick="openLabLevelModal(this.dataset.vuln, this.dataset.size)">
+            <div class="vuln-3d-icon">💉</div>
+            <div class="vuln-3d-title">SQLi Attack</div>
+            <div class="vuln-3d-desc">Database extraction vectors</div>
           </div>
 
-          <!-- Isometric 3D Vulnerability Grid -->
-          <div class="vuln-3d-grid" id="labModulesList">
-
-            <div class="vuln-3d-card" data-vuln="SQL Injection" data-size="small"
-              onclick="openLabLevelModal(this.dataset.vuln, this.dataset.size)">
-              <div class="vuln-3d-icon">💉</div>
-              <div class="vuln-3d-title">SQLi Attack</div>
-              <div class="vuln-3d-desc">Database extraction vectors</div>
-            </div>
-
-            <div class="vuln-3d-card" data-vuln="Cross-Site Scripting" data-size="small"
-              onclick="openLabLevelModal(this.dataset.vuln, this.dataset.size)">
-              <div class="vuln-3d-icon">📜</div>
-              <div class="vuln-3d-title">XSS Injection</div>
-              <div class="vuln-3d-desc">DOM / Reflected exploits</div>
-            </div>
-
-            <div class="vuln-3d-card" data-vuln="SSTI" data-size="small"
-              onclick="openLabLevelModal(this.dataset.vuln, this.dataset.size)">
-              <div class="vuln-3d-icon">⚙️</div>
-              <div class="vuln-3d-title">SSTI Template</div>
-              <div class="vuln-3d-desc">Arbitrary rendering code</div>
-            </div>
-
-            <div class="vuln-3d-card" data-vuln="IDOR" data-size="small"
-              onclick="openLabLevelModal(this.dataset.vuln, this.dataset.size)">
-              <div class="vuln-3d-icon">🔓</div>
-              <div class="vuln-3d-title">IDOR Access</div>
-              <div class="vuln-3d-desc">Direct object bypassing</div>
-            </div>
-
-            <div class="vuln-3d-card locked-lab" data-vuln="OTP Bypass" data-size="medium"
-              onclick="showToast('OTP Bypass is currently locked.', 'error')">
-              <div class="lock-overlay">🔒</div>
-              <div class="vuln-3d-icon">📱</div>
-              <div class="vuln-3d-title">OTP Bypass</div>
-              <div class="vuln-3d-desc">Auth logic manipulation</div>
-            </div>
-
-            <div class="vuln-3d-card locked-lab" data-vuln="CSRF" data-size="small"
-              onclick="showToast('CSRF is currently locked.', 'error')">
-              <div class="lock-overlay">🔒</div>
-              <div class="vuln-3d-icon">🎭</div>
-              <div class="vuln-3d-title">CSRF Forgery</div>
-              <div class="vuln-3d-desc">Unwanted action execution</div>
-            </div>
-
-            <div class="vuln-3d-card locked-lab" data-vuln="SSRF" data-size="small"
-              onclick="showToast('SSRF is currently locked.', 'error')">
-              <div class="lock-overlay">🔒</div>
-              <div class="vuln-3d-icon">📡</div>
-              <div class="vuln-3d-title">SSRF Internal</div>
-              <div class="vuln-3d-desc">Server-side request forging</div>
-            </div>
-
-            <div class="vuln-3d-card" data-vuln="Brute Force" data-size="small"
-              onclick="openLabLevelModal(this.dataset.vuln, this.dataset.size)">
-              <div class="vuln-3d-icon">💥</div>
-              <div class="vuln-3d-title">Brute Force</div>
-              <div class="vuln-3d-desc">Auth attack vectors</div>
-            </div>
-
-            <div class="vuln-3d-card locked-lab" data-vuln="LFI / Traversal" data-size="small"
-              onclick="showToast('LFI / Traversal is currently locked.', 'error')">
-              <div class="lock-overlay">🔒</div>
-              <div class="vuln-3d-icon">📂</div>
-              <div class="vuln-3d-title">LFI Traversal</div>
-              <div class="vuln-3d-desc">Directory escape tricks</div>
-            </div>
-
+          <div class="vuln-3d-card" data-vuln="Cross-Site Scripting" data-size="small"
+            onclick="openLabLevelModal(this.dataset.vuln, this.dataset.size)">
+            <div class="vuln-3d-icon">📜</div>
+            <div class="vuln-3d-title">XSS Injection</div>
+            <div class="vuln-3d-desc">DOM / Reflected exploits</div>
           </div>
 
-          <!-- Footer -->
-          <div style="
+          <div class="vuln-3d-card" data-vuln="SSTI" data-size="small"
+            onclick="openLabLevelModal(this.dataset.vuln, this.dataset.size)">
+            <div class="vuln-3d-icon">⚙️</div>
+            <div class="vuln-3d-title">SSTI Template</div>
+            <div class="vuln-3d-desc">Arbitrary rendering code</div>
+          </div>
+
+          <div class="vuln-3d-card" data-vuln="IDOR" data-size="small"
+            onclick="openLabLevelModal(this.dataset.vuln, this.dataset.size)">
+            <div class="vuln-3d-icon">🔓</div>
+            <div class="vuln-3d-title">IDOR Access</div>
+            <div class="vuln-3d-desc">Direct object bypassing</div>
+          </div>
+
+          <div class="vuln-3d-card locked-lab" data-vuln="OTP Bypass" data-size="medium"
+            onclick="showToast('OTP Bypass is currently locked.', 'error')">
+            <div class="lock-overlay">🔒</div>
+            <div class="vuln-3d-icon">📱</div>
+            <div class="vuln-3d-title">OTP Bypass</div>
+            <div class="vuln-3d-desc">Auth logic manipulation</div>
+          </div>
+
+          <div class="vuln-3d-card" data-vuln="JWT Attack" data-size="small"
+            onclick="openLabLevelModal(this.dataset.vuln, this.dataset.size)">
+            <div class="vuln-3d-icon">🔑</div>
+            <div class="vuln-3d-title">JWT Attack</div>
+            <div class="vuln-3d-desc">Token signing manipulation</div>
+          </div>
+
+          <div class="vuln-3d-card locked-lab" data-vuln="SSRF" data-size="small"
+            onclick="showToast('SSRF is currently locked.', 'error')">
+            <div class="lock-overlay">🔒</div>
+            <div class="vuln-3d-icon">📡</div>
+            <div class="vuln-3d-title">SSRF Internal</div>
+            <div class="vuln-3d-desc">Server-side request forging</div>
+          </div>
+
+          <div class="vuln-3d-card" data-vuln="Brute Force" data-size="small"
+            onclick="openLabLevelModal(this.dataset.vuln, this.dataset.size)">
+            <div class="vuln-3d-icon">💥</div>
+            <div class="vuln-3d-title">Brute Force</div>
+            <div class="vuln-3d-desc">Auth attack vectors</div>
+          </div>
+
+          <div class="vuln-3d-card locked-lab" data-vuln="LFI / Traversal" data-size="small"
+            onclick="showToast('LFI / Traversal is currently locked.', 'error')">
+            <div class="lock-overlay">🔒</div>
+            <div class="vuln-3d-icon">📂</div>
+            <div class="vuln-3d-title">LFI Traversal</div>
+            <div class="vuln-3d-desc">Directory escape tricks</div>
+          </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div style="
             padding: 14px 24px;
             border-top: 1px solid rgba(255,255,255,0.06);
             text-align: center;
@@ -2253,15 +2280,15 @@
             font-size: 12px;
             font-family: monospace;
           ">
-            Select a vulnerability to set difficulty parameters.
-          </div>
+          Select a vulnerability to set difficulty parameters.
         </div>
       </div>
+    </div>
 
-      <!-- ── Lab Level Selection Modal (Low / Medium / High) ── -->
-      <div id="labLevelModal" class="modal-overlay" style="display:none; z-index:1000;"
-        onclick="if(event.target===this)this.style.display='none'">
-        <div id="labLevelModalBox" style="
+    <!-- ── Lab Level Selection Modal (Low / Medium / High) ── -->
+    <div id="labLevelModal" class="modal-overlay" style="display:none; z-index:1000;"
+      onclick="if(event.target===this)this.style.display='none'">
+      <div id="labLevelModalBox" style="
           background: rgba(10,10,12,0.98);
           backdrop-filter: blur(20px);
           border: 1px solid rgba(0,255,200,0.3);
@@ -2271,101 +2298,101 @@
           animation: modalIn 0.3s ease;
           position: relative;
         ">
-          <div style="padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align:center;">
-            <h3 id="labLevelTitle"
-              style="color:#00ffcc; margin:0; font-family:var(--font-mono); letter-spacing:-0.5px;">Vulnerability
-              Selected</h3>
-            <p style="color:#888; font-size:12px; margin:4px 0 0 0;">Select configuration difficulty</p>
-          </div>
+        <div style="padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align:center;">
+          <h3 id="labLevelTitle" style="color:#00ffcc; margin:0; font-family:var(--font-mono); letter-spacing:-0.5px;">
+            Vulnerability
+            Selected</h3>
+          <p style="color:#888; font-size:12px; margin:4px 0 0 0;">Select configuration difficulty</p>
+        </div>
 
-          <!-- 3D Holographic Triangle Scene -->
-          <div class="scene-triangle">
-            <div class="holo-triangle-container">
-              <div class="holo-triangle-face holo-triangle-front"></div>
-              <div class="holo-triangle-face holo-triangle-back"></div>
-              <div class="holo-triangle-face holo-triangle-left"></div>
-              <div class="holo-triangle-face holo-triangle-right"></div>
-            </div>
-          </div>
-
-          <div style="padding: 10px 30px 40px; display:flex; justify-content:center; gap:25px;">
-            <!-- Low -->
-            <div class="btn-cube-wrapper">
-              <div class="btn-3d-cube cube-low" onclick="launchLab('Low')">LOW</div>
-            </div>
-
-            <!-- Medium -->
-            <div class="btn-cube-wrapper">
-              <div class="btn-3d-cube cube-med" onclick="launchLab('Medium')">MEDIUM</div>
-            </div>
-
-            <!-- High -->
-            <div class="btn-cube-wrapper">
-              <div class="btn-3d-cube cube-high" onclick="launchLab('High')">HIGH</div>
-            </div>
+        <!-- 3D Holographic Triangle Scene -->
+        <div class="scene-triangle">
+          <div class="holo-triangle-container">
+            <div class="holo-triangle-face holo-triangle-front"></div>
+            <div class="holo-triangle-face holo-triangle-back"></div>
+            <div class="holo-triangle-face holo-triangle-left"></div>
+            <div class="holo-triangle-face holo-triangle-right"></div>
           </div>
         </div>
-      </div>
 
-      <!-- ── LAB BUILDING 3D FULLSCREEN OVERLAY ── -->
-      <div id="buildLabOverlay"
-        style="display:none; position:fixed; z-index:99999; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); backdrop-filter:blur(15px); flex-direction:column; justify-content:center; align-items:center;">
-        <div class="lab-building-cube" style="margin-bottom: 50px;">
-          <div class="lab-building-face lab-face-1"></div>
-          <div class="lab-building-face lab-face-2"></div>
-          <div class="lab-building-face lab-face-3"></div>
-          <div class="lab-building-face lab-face-4"></div>
-          <div class="lab-building-face lab-face-5"></div>
-          <div class="lab-building-face lab-face-6"></div>
-        </div>
-        <h2
-          style="color:#00ff88; font-family:var(--font-mono); letter-spacing: 4px; font-weight:900; animation: pulse 1s infinite alternate;">
-          PROVISIONING LAB</h2>
-        <p style="color:#aaa; font-family:var(--font-mono); font-size:14px; margin-top:10px;">Target: <span
-            id="buildLabTargetTxt" style="color:#fff; font-weight:bold;"></span></p>
-        <div
-          style="width: 300px; height: 4px; background: rgba(0,255,136,0.2); margin-top: 30px; border-radius: 2px; overflow:hidden;">
-          <div id="buildLabProgress"
-            style="height: 100%; width: 0%; background: #00ff88; box-shadow: 0 0 10px #00ff88;"></div>
-        </div>
-        <p id="buildLabStatTxt" style="color:#00ff88; font-family:monospace; font-size:11px; margin-top:8px;">
-          Initializing Container...</p>
-      </div>
+        <div style="padding: 10px 30px 40px; display:flex; justify-content:center; gap:25px;">
+          <!-- Low -->
+          <div class="btn-cube-wrapper">
+            <div class="btn-3d-cube cube-low" onclick="launchLab('Low')">LOW</div>
+          </div>
 
-    </div>
+          <!-- Medium -->
+          <div class="btn-cube-wrapper">
+            <div class="btn-3d-cube cube-med" onclick="launchLab('Medium')">MEDIUM</div>
+          </div>
 
-    <!-- ── Add User Modal ───────────────────────────────── -->
-    <div id="addUserModal" class="modal-overlay" style="display:none;"
-      onclick="if(event.target===this)this.style.display='none'">
-      <div class="modal">
-        <h3>➕ Add New User</h3>
-        <div class="form-group">
-          <label>Username</label>
-          <input type="text" id="newUsername" class="form-input" placeholder="username">
-        </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="newEmail" class="form-input" placeholder="user@aau.edu.et">
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" id="newPassword" class="form-input" placeholder="password">
-        </div>
-        <div class="form-group">
-          <label>Role</label>
-          <select id="newRole" class="form-input">
-            <option value="analyst">Analyst</option>
-            <option value="developer">Developer</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-secondary"
-            onclick="document.getElementById('addUserModal').style.display='none'">Cancel</button>
-          <button class="btn btn-primary" onclick="addUser()">Add User</button>
+          <!-- High -->
+          <div class="btn-cube-wrapper">
+            <div class="btn-3d-cube cube-high" onclick="launchLab('High')">HIGH</div>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- ── LAB BUILDING 3D FULLSCREEN OVERLAY ── -->
+    <div id="buildLabOverlay"
+      style="display:none; position:fixed; z-index:99999; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); backdrop-filter:blur(15px); flex-direction:column; justify-content:center; align-items:center;">
+      <div class="lab-building-cube" style="margin-bottom: 50px;">
+        <div class="lab-building-face lab-face-1"></div>
+        <div class="lab-building-face lab-face-2"></div>
+        <div class="lab-building-face lab-face-3"></div>
+        <div class="lab-building-face lab-face-4"></div>
+        <div class="lab-building-face lab-face-5"></div>
+        <div class="lab-building-face lab-face-6"></div>
+      </div>
+      <h2
+        style="color:#00ff88; font-family:var(--font-mono); letter-spacing: 4px; font-weight:900; animation: pulse 1s infinite alternate;">
+        PROVISIONING LAB</h2>
+      <p style="color:#aaa; font-family:var(--font-mono); font-size:14px; margin-top:10px;">Target: <span
+          id="buildLabTargetTxt" style="color:#fff; font-weight:bold;"></span></p>
+      <div
+        style="width: 300px; height: 4px; background: rgba(0,255,136,0.2); margin-top: 30px; border-radius: 2px; overflow:hidden;">
+        <div id="buildLabProgress" style="height: 100%; width: 0%; background: #00ff88; box-shadow: 0 0 10px #00ff88;">
+        </div>
+      </div>
+      <p id="buildLabStatTxt" style="color:#00ff88; font-family:monospace; font-size:11px; margin-top:8px;">
+        Initializing Container...</p>
+    </div>
+
+  </div>
+
+  <!-- ── Add User Modal ───────────────────────────────── -->
+  <div id="addUserModal" class="modal-overlay" style="display:none;"
+    onclick="if(event.target===this)this.style.display='none'">
+    <div class="modal">
+      <h3>➕ Add New User</h3>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="newUsername" class="form-input" placeholder="username">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="newEmail" class="form-input" placeholder="user@aau.edu.et">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="newPassword" class="form-input" placeholder="password">
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <select id="newRole" class="form-input">
+          <option value="analyst">Analyst</option>
+          <option value="developer">Developer</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary"
+          onclick="document.getElementById('addUserModal').style.display='none'">Cancel</button>
+        <button class="btn btn-primary" onclick="addUser()">Add User</button>
+      </div>
+    </div>
+  </div>
 
   </div><!-- /app-layout -->
 
@@ -2609,6 +2636,14 @@
       if (activeVulnLab === 'Cross-Site Scripting') {
         if (difficulty === 'Low') window.location.href = '/aau/threatmapper/aaulab/xss_low';
         else if (difficulty === 'Medium') window.location.href = '/aau/threatmapper/aaulab/xss_medium';
+        else if (difficulty === 'High') window.location.href = '/aau/threatmapper/aaulab/xss_high';
+        return;
+      }
+
+      if (activeVulnLab === 'JWT Attack') {
+        if (difficulty === 'Low') window.location.href = '/aau/threatmapper/aaulab/jwt_low';
+        else if (difficulty === 'Medium') window.location.href = '/aau/threatmapper/aaulab/jwt_medium';
+        else if (difficulty === 'High') window.location.href = '/aau/threatmapper/aaulab/jwt_high';
         return;
       }
 
@@ -2859,6 +2894,11 @@
 
   </script>
 
+  <footer
+    style="margin-top: 40px; padding: 24px; text-align: center; color: rgba(255,255,255,0.25); font-size: 11px; font-family: monospace; border-top: 1px solid rgba(0, 255, 136, 0.1); width: 100%; letter-spacing: 1px;">
+    THREATMAPPER © 2026 ABRHAM. ALL RIGHTS RESERVED.<br>
+    <span style="opacity: 0.6; font-size: 10px;">ADDIS ABABA INSTITUTE OF TECHNOLOGY (AAIT) · SECURITY LAB</span>
+  </footer>
 
 </body>
 

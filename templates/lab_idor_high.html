@@ -337,6 +337,33 @@
 
       {% if not logged_in_user %}
       <!-- User is not logged in to the lab yet -->
+      <!-- ONE-CLICK ROLE BUTTONS -->
+      <div style="margin-bottom:30px; text-align: center;">
+        <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;">⚡
+          One-Click Role Login</div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <a href="?quick=Hermela"
+            style="display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:rgba(255,50,50,0.15);border:1px solid rgba(255,50,50,0.45);border-radius:8px;color:#ff3333;font-weight:700;font-size:13px;text-decoration:none;transition:all 0.2s;"
+            onmouseover="this.style.background='rgba(255,50,50,0.28)'"
+            onmouseout="this.style.background='rgba(255,50,50,0.15)'">
+            🔑 Admin (Hermela)
+          </a>
+          <a href="?quick=Abreham"
+            style="display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.35);border-radius:8px;color:#ff3333;font-weight:700;font-size:13px;text-decoration:none;transition:all 0.2s;"
+            onmouseover="this.style.background='rgba(255,50,50,0.22)'"
+            onmouseout="this.style.background='rgba(255,50,50,0.1)'">
+            👤 User (Abreham)
+          </a>
+        </div>
+      </div>
+
+      <div
+        style="display:flex;align-items:center;gap:12px;margin-bottom:25px; max-width: 400px; margin-left: auto; margin-right: auto;">
+        <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
+        <span style="font-size:11px;color:#444;text-transform:uppercase;letter-spacing:1px;">or login manually</span>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
+      </div>
+
       <p style="color: #aaa; margin-bottom: 30px; line-height: 1.6;">
         <strong>Lab Objective:</strong> Exploit the IDOR vulnerability. In this Hard difficulty, the application uses
         unguessable UUIDs rather than sequential numbers. However, they forgot to check ownership!<br>

@@ -4,11 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JWT Attacks — Low Level | ThreatMapper Labs</title>
+    <title>JWT Attacks — Medium Level | ThreatMapper Labs</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <style>
+        /* Shared Styles (consistent with Low level) */
         *,
         *::before,
         *::after {
@@ -30,13 +31,11 @@
             content: '';
             position: fixed;
             inset: 0;
-            background: radial-gradient(ellipse at 20% 20%, rgba(255, 106, 0, 0.08) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 80%, rgba(0, 255, 136, 0.06) 0%, transparent 60%);
+            background: radial-gradient(ellipse at 20% 20%, rgba(0, 255, 136, 0.08) 0%, transparent 60%);
             z-index: -1;
             pointer-events: none;
         }
 
-        /* NAV */
         nav {
             width: 100%;
             height: 58px;
@@ -55,7 +54,7 @@
         .brand {
             font-size: 17px;
             font-weight: 700;
-            background: linear-gradient(90deg, #ff6a00, #ffaa00);
+            background: linear-gradient(90deg, #00ffcc, #0088ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-right: auto;
@@ -70,10 +69,9 @@
         }
 
         nav a:hover {
-            color: #ffaa00;
+            color: #00ffcc;
         }
 
-        /* LAYOUT */
         .page-wrap {
             max-width: 900px;
             margin: 0 auto;
@@ -81,7 +79,6 @@
             width: 100%;
         }
 
-        /* LAB HEADER */
         .lab-header {
             display: flex;
             align-items: flex-start;
@@ -96,9 +93,9 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
             border-radius: 4px;
-            background: rgba(0, 255, 204, 0.1);
-            border: 1px solid rgba(0, 255, 204, 0.3);
-            color: #00ffcc;
+            background: rgba(0, 255, 136, 0.15);
+            border: 1px solid rgba(0, 255, 136, 0.4);
+            color: #00ff88;
             white-space: nowrap;
             margin-top: 5px;
         }
@@ -117,7 +114,6 @@
             line-height: 1.6;
         }
 
-        /* CARDS */
         .card {
             background: rgba(10, 10, 20, 0.75);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -132,7 +128,7 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            color: #ffaa00;
+            color: #00ffcc;
             margin-bottom: 18px;
             display: flex;
             align-items: center;
@@ -144,11 +140,10 @@
             display: block;
             width: 3px;
             height: 16px;
-            background: #ffaa00;
+            background: #00ffcc;
             border-radius: 2px;
         }
 
-        /* PROFILE */
         .profile-header {
             display: flex;
             justify-content: space-between;
@@ -184,18 +179,17 @@
         }
 
         .role-tag-admin {
-            background: rgba(255, 50, 50, 0.2);
-            color: #ff3333;
-            border: 1px solid rgba(255, 50, 50, 0.4);
+            background: rgba(0, 255, 136, 0.15);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.4);
         }
 
         .role-tag-user {
-            background: rgba(0, 255, 204, 0.1);
-            color: #00ffcc;
-            border: 1px solid rgba(0, 255, 204, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: #aaa;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* ALERT / FLAG */
         .alert {
             padding: 14px 18px;
             border-radius: 8px;
@@ -210,8 +204,8 @@
         }
 
         .flag-box {
-            background: rgba(255, 170, 0, 0.05);
-            border: 1px solid rgba(255, 170, 0, 0.3);
+            background: rgba(0, 255, 136, 0.08);
+            border: 1px solid rgba(0, 255, 136, 0.3);
             border-radius: 10px;
             padding: 22px 24px;
             text-align: center;
@@ -222,7 +216,7 @@
             font-size: 11px;
             letter-spacing: 2px;
             text-transform: uppercase;
-            color: #ffaa00;
+            color: #00ff88;
             opacity: 0.7;
             margin-bottom: 10px;
         }
@@ -234,7 +228,6 @@
             color: #fff;
         }
 
-        /* SOURCE CODE */
         .source-block {
             background: rgba(0, 0, 0, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -268,7 +261,6 @@
             color: #f92672;
         }
 
-        /* LISTS */
         .steps {
             list-style: none;
             counter-reset: steps;
@@ -299,14 +291,6 @@
             font-size: 12px;
             font-weight: 700;
             flex-shrink: 0;
-        }
-
-        .steps li code {
-            background: rgba(0, 0, 0, 0.5);
-            color: #00ffcc;
-            font-family: 'JetBrains Mono', monospace;
-            padding: 1px 6px;
-            border-radius: 3px;
         }
 
         .divider {
@@ -349,13 +333,12 @@
     </nav>
 
     <div class="page-wrap">
-        <!-- Lab Header -->
         <div class="lab-header">
-            <div class="lab-badge">Low</div>
+            <div class="lab-badge">Medium</div>
             <div class="lab-title">
-                <h1>JWT Attack — <code>alg=none</code> Bypass</h1>
-                <p>The server accepts tokens whose <code>alg</code> header is set to <code>none</code>, completely
-                    skipping signature verification. Practice forging tokens to escalate privileges.</p>
+                <h1>JWT Attack — Weak Secret Enforcement</h1>
+                <p>The server enforces <code>HS256</code> signatures but uses a potentially weak secret. Analyze the
+                    token and attempt to escalate from user to administrator.</p>
             </div>
         </div>
 
@@ -372,7 +355,6 @@
         <div class="card" style="max-width: 480px; margin: 0 auto; border: 1px solid rgba(0,255,204,0.15);">
             <div class="card-title" style="text-align: center; margin-bottom: 25px;">Lab Authentication</div>
 
-            <!-- Credentials Table -->
             <div style="margin-bottom:25px;">
                 <table
                     style="width:100%; border-collapse: collapse; font-size:12px; background:rgba(0,0,0,0.3); border-radius:8px; overflow:hidden; border: 1px solid rgba(255,255,255,0.05);">
@@ -409,7 +391,7 @@
             {% endif %}
 
             <form method="POST">
-                <input type="hidden" name="jwtl_login" value="1">
+                <input type="hidden" name="jwtm_login" value="1">
                 <div style="margin-bottom:15px;">
                     <label
                         style="display:block; font-size:11px; color:#666; margin-bottom:6px; text-transform:uppercase;">Username</label>
@@ -443,7 +425,6 @@
         </div>
 
         {% elif jwt_user %}
-        <!-- ======== TOKEN-BASED IDENTITY ANALYSIS ======== -->
         <div class="card">
             <div class="profile-header">
                 <div class="profile-avatar">{{ jwt_user.name[0] }}</div>
@@ -459,14 +440,13 @@
                     {% endif %}
                 </div>
                 <form method="POST">
-                    <button type="submit" name="jwtl_clear" value="1" class="btn btn-secondary">
+                    <button type="submit" name="jwtm_clear" value="1" class="btn btn-secondary">
                         🗑 Clear Cookie
                     </button>
                 </form>
             </div>
 
             <div class="divider"></div>
-
             <!-- Analysis section removed per request -->
 
             {% if flag_output %}
@@ -475,52 +455,42 @@
                 <div class="flag-value">{{ flag_output }}</div>
             </div>
             {% elif jwt_role == 'admin' %}
-            <div class="flag-box" style="border-color:rgba(255,170,0,0.4);background:rgba(255,170,0,0.05);">
-                <div class="flag-label" style="color:#ffaa00;">⚠ Admin Privileges Verified</div>
-                <div class="flag-value" style="color:#ffaa00;font-size:14px;">Identity confirmed as Admin via token.
-                    Flag issued.</div>
+            <div class="flag-box" style="border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.05);">
+                <div class="flag-label" style="color:#00ff88;">🛡 Admin Identity Verified</div>
+                <div class="flag-value" style="color:#00ff88;font-size:14px;">The signature is valid. Identity
+                    confirmed.</div>
             </div>
             {% else %}
             <div class="alert alert-error" style="margin-top:18px;">
-                Role from JWT: <strong style="color:#ff5555;">{{ jwt_role }}</strong> — You need
-                <code>role: admin</code> in your token to capture the flag.
+                Role: <strong style="color:#ff5555;">{{ jwt_role }}</strong> — Signature verification is active.
+                Brute-force the secret to forge an admin token.
             </div>
             {% endif %}
         </div>
         {% endif %}
 
-        <!-- ======== EXPLOIT STEPS ======== -->
         <div class="card">
             <div class="card-title">Exploitation Guide</div>
             <ol class="steps">
-                <li>Log in as <code>Abreham / passwd1</code> to receive a valid session token.</li>
-                <li>Crack/inspect the <code>jwt_low</code> cookie. Note the header: <code>{"alg":"HS256"}</code>.</li>
-                <li>Modify the header to <code>{"alg":"none"}</code> and the payload to
-                    <code>{"role":"admin", "id":1}</code>.</li>
-                <li>Submit the forged token without a signature (e.g., <code>[header].[payload].</code>).</li>
-                <li>The server accepts the <code>none</code> algorithm without verification.</li>
+                <li>Acquire a user token by logging in.</li>
+                <li>Crack the <code>HS256</code> secret using a tool like <code>hashcat</code> or <code>jwt_tool</code>.
+                </li>
+                <li>Forge a new token with <code>"role":"admin"</code> and sign it with the cracked secret.</li>
+                <li>Update your cookie and refresh to capture the flag.</li>
             </ol>
         </div>
 
-        <!-- ======== PHP SOURCE ======== -->
         <div class="card">
-            <div class="card-title">Backend Logic (Vulnerable)</div>
-            <div class="source-block"><span class="kw">function</span> <span class="fn">verify_jwt</span>(<span
-                    class="vr">$jwt</span>) {
-                <span class="vr">$parts</span> = explode(<span class="str">'.'</span>, <span class="vr">$jwt</span>);
-                <span class="kw">list</span>(<span class="vr">$h_b64</span>, <span class="vr">$p_b64</span>, <span
-                    class="vr">$s_b64</span>) = <span class="vr">$parts</span>;
-                <span class="vr">$header</span> = json_decode(base64url_decode(<span class="vr">$h_b64</span>), <span
-                    class="kw">true</span>);
-
-                <span class="cm">// INTENTIONAL VULNERABILITY:</span>
-                <span class="kw">if</span> (strtolower(<span class="vr">$header</span>[<span class="str">'alg'</span>])
-                === <span class="str">'none'</span>) {
-                <span class="kw">return</span> [<span class="kw">true</span>, json_decode(base64url_decode(<span
-                    class="vr">$p_b64</span>), <span class="kw">true</span>)];
-                }
-
-                <span class="cm">// Normal HS256 verification...</span>
+            <div class="card-title">Secure Verification Logic</div>
+            <div class="source-block"><span class="kw">function</span> <span class="fn">verify_jwt_secure</span>(<span
+                    class="vr">$jwt</span>, <span class="vr">$secret</span>) {
+                <span class="cm">// Enforces algorithm and verifies signature</span>
+                <span class="kw">if</span> (<span class="vr">$header</span>[<span class="str">'alg'</span>] !== <span
+                    class="str">'HS256'</span>) <span class="kw">return</span> <span class="kw">false</span>;
+                <span class="vr">$valid</span> = <span class="fn">hash_hmac</span>(<span class="str">'sha256'</span>,
+                <span class="vr">$data</span>, <span class="vr">$secret</span>);
+                <span class="kw">return</span> <span class="fn">hash_equals</span>(<span class="vr">$valid</span>, <span
+                    class="vr">$signature</span>);
                 }
             </div>
         </div>

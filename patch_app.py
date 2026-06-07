@@ -16,7 +16,7 @@ new_route = """    return render_template('lab_sqli_low.html',
 @app.route('/aau/threatmapper/aaulab/sqli/medium', methods=['GET', 'POST'])
 @login_required
 def aaulab_sqli_medium():
-    flag = 'gtwss{medium_level_sqli_exploited}'
+    flag = 'AAU{medium_level_sqli_exploited}'
     results = []
     error = None
     flag_output = None
