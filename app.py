@@ -270,7 +270,7 @@ def access_granted():
 # ── Lab Routes ──────────────────────────────────────────────
 @app.route("/labs/xss_low", methods=["GET", "POST"])
 @login_required
-def aaulab_xss_low():
+def lab_xss_low():
     flag = "FLAG{xss_reflected_low_exploited}"
     error = None
     # Simple user credentials similar to IDOR lab
