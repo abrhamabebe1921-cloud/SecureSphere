@@ -1680,8 +1680,8 @@
   }
 
   .cube-med {
-    border-color: #00ff88;
-    text-shadow: 0 0 10px #00ff88;
+    border-color: #ff8c00;
+    text-shadow: 0 0 10px #ff8c00;
     box-shadow: 0 12px 0px #664400, 0 20px 30px rgba(255, 170, 0, 0.3);
   }
 
@@ -1704,6 +1704,20 @@
   }
 
   .cube-high:active {
+    box-shadow: 0 0px 0px #000;
+  }
+
+  .cube-impossible {
+    border-color: #a855f7;
+    text-shadow: 0 0 10px #a855f7;
+    box-shadow: 0 12px 0px #5b21b6, 0 20px 30px rgba(168, 85, 247, 0.3);
+  }
+
+  .cube-impossible:hover {
+    box-shadow: 0 10px 0px #5b21b6, 0 25px 40px rgba(168, 85, 247, 0.5);
+  }
+
+  .cube-impossible:active {
     box-shadow: 0 0px 0px #000;
   }
 

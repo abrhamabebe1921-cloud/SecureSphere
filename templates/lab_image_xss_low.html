@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSS via Image Upload (Low) — SecureSphere Labs</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap');
+
+        :root {
+            --bg: #00040e;
+            --bg2: #000a1a;
+            --border: rgba(0, 140, 255, 0.3);
+            --accent: #00aaff;
+            --accent2: #00ffff;
+            --green: #00ff88;
+            --red: #ff3355;
+            --text: #c9d8f0;
+            --dim: #4a6080;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: radial-gradient(ellipse at 30% 0%, rgba(0, 80, 200, 0.18) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(0, 30, 80, 0.25) 0%, transparent 60%),
+                var(--bg);
+        }
+
+        /* ── NAV ── */
+        nav {
+            height: 60px;
+            background: rgba(0, 8, 20, 0.85);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            padding: 0 28px;
+            gap: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            width: 36px;
+            height: 36px;
+            filter: drop-shadow(0 0 8px rgba(0, 170, 255, 0.6));
+        }
+
+        .nav-brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-back {
+            margin-left: auto;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border: 1px solid rgba(0, 170, 255, 0.3);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-back:hover {
+            background: rgba(0, 170, 255, 0.1);
+            border-color: var(--accent2);
+        }
+
+        /* ── LAYOUT ── */
+        .page {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 36px 20px 60px;
+        }
+
+        .lab-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .lab-icon {
+            width: 52px;
+            height: 52px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, rgba(0, 80, 200, 0.3), rgba(0, 200, 255, 0.15));
+            border: 1px solid rgba(0, 170, 255, 0.4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.15);
+        }
+
+        .lab-title h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent2);
+            line-height: 1.2;
+        }
+
+        .lab-meta {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 3px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .badge-low {
+            background: rgba(0, 255, 136, 0.12);
+            color: var(--green);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .badge-xss {
+            background: rgba(255, 50, 80, 0.12);
+            color: #ff6688;
+            border: 1px solid rgba(255, 50, 80, 0.3);
+        }
+
+        .badge-owasp {
+            background: rgba(255, 160, 0, 0.10);
+            color: #ffaa44;
+            border: 1px solid rgba(255, 160, 0, 0.25);
+        }
+
+        /* ── PANEL ── */
+        .panel {
+            background: rgba(0, 12, 28, 0.7);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 26px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(12px);
+        }
+
+        .panel-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            color: var(--dim);
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border), transparent);
+        }
+
+        /* ── INFO BOX ── */
+        .info-box {
+            background: rgba(0, 100, 200, 0.07);
+            border: 1px solid rgba(0, 140, 255, 0.2);
+            border-left: 3px solid var(--accent);
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 13px;
+            line-height: 1.7;
+            color: rgba(200, 220, 255, 0.8);
+            margin-bottom: 18px;
+        }
+
+        .info-box strong {
+            color: var(--accent2);
+        }
+
+        .info-box code {
+            background: rgba(0, 170, 255, 0.1);
+            border: 1px solid rgba(0, 170, 255, 0.2);
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--accent2);
+        }
+
+        /* ── SVG HINT ── */
+        .svg-hint {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #8faaba;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .svg-hint .kw {
+            color: #79b8ff;
+        }
+
+        .svg-hint .tag {
+            color: #f97583;
+        }
+
+        .svg-hint .attr {
+            color: #b392f0;
+        }
+
+        .svg-hint .val {
+            color: var(--accent2);
+        }
+
+        /* ── FORM ── */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(180, 210, 255, 0.8);
+            margin-bottom: 8px;
+        }
+
+        .file-drop {
+            background: rgba(0, 20, 50, 0.5);
+            border: 2px dashed rgba(0, 140, 255, 0.35);
+            border-radius: 10px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-drop:hover {
+            background: rgba(0, 40, 80, 0.5);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.12);
+        }
+
+        .file-drop input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .file-drop-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .file-drop-text {
+            font-size: 13px;
+            color: var(--dim);
+        }
+
+        .file-drop-text strong {
+            color: var(--accent);
+        }
+
+        .file-selected {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--green);
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .btn-upload {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #0060cc, #0099ff);
+            color: #fff;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 100, 200, 0.3);
+        }
+
+        .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 150, 255, 0.4);
+        }
+
+        /* ── OUTPUT ── */
+        .output-box {
+            margin-top: 20px;
+            padding: 14px 16px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        .output-success {
+            background: rgba(0, 255, 136, 0.07);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--green);
+        }
+
+        .output-error {
+            background: rgba(255, 50, 80, 0.07);
+            border: 1px solid rgba(255, 50, 80, 0.3);
+            color: var(--red);
+        }
+
+        /* ── DEFENCE TIP ── */
+        .defence-tip {
+            background: rgba(0, 80, 30, 0.2);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-left: 3px solid var(--green);
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 13px;
+            line-height: 1.7;
+            color: rgba(180, 255, 200, 0.8);
+        }
+
+        .defence-tip strong {
+            color: var(--green);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="/dashboard" class="nav-logo">
+            <img src="https://cdn-icons-png.flaticon.com/512/2716/2716612.png" alt="Defence Logo">
+            <span class="nav-brand">SecureSphere Labs</span>
+        </a>
+        <a href="/dashboard" class="nav-back">← Dashboard</a>
+    </nav>
+
+    <div class="page">
+
+        <div class="lab-header">
+            <div class="lab-icon">🖼️</div>
+            <div class="lab-title">
+                <h1>XSS via SVG Image Upload</h1>
+                <div class="lab-meta">
+                    <span class="badge badge-low">Low</span>
+                    <span class="badge badge-xss">XSS · A03:2021</span>
+                    <span class="badge badge-owasp">OWASP Top 10</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Objective -->
+        <div class="panel">
+            <div class="panel-title">🎯 Objective</div>
+            <div class="info-box">
+                <strong>What is XSS via Image Upload?</strong><br>
+                SVG (Scalable Vector Graphics) files are XML-based and can contain embedded
+                <code>&lt;script&gt;</code> tags. A vulnerable application that renders uploaded SVGs
+                directly in the browser — without sanitization — allows attackers to execute arbitrary
+                JavaScript in the victim's session.<br><br>
+                <strong>Goal:</strong> Upload an SVG file containing a <code>&lt;script&gt;</code> tag.
+                When the browser renders the SVG in the iframe, the script will execute — demonstrating
+                stored XSS via file upload.
+            </div>
+
+            <div class="panel-title" style="margin-top:16px;">💡 Craft Your Payload</div>
+            <div class="svg-hint">
+                <span class="tag">&lt;svg</span> <span class="attr">xmlns</span>=<span
+                    class="val">"http://www.w3.org/2000/svg"</span><span class="tag">&gt;</span><br>
+                &nbsp;&nbsp;<span class="tag">&lt;script</span> <span class="attr">type</span>=<span
+                    class="val">"text/javascript"</span><span class="tag">&gt;</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">alert</span>(<span class="val">'XSS via SVG — Flag:
+                    EACA{svg_xss_pwned}'</span>);<br>
+                &nbsp;&nbsp;<span class="tag">&lt;/script&gt;</span><br>
+                <span class="tag">&lt;/svg&gt;</span>
+            </div>
+            <div class="panel-title" style="margin-top:16px;">💻 Vulnerable Source Code</div>
+            <pre
+                style="background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 15px; font-family: monospace; color: #aaa; font-size: 12px; margin-bottom: 0px; overflow-x: auto; white-space: pre; line-height: 1.5;">&lt;?php
+// source/low.php  (included by vulnerabilities/&lt;module&gt;/index.php)
+
+
+$message = '';
+
+
+// Figure out the module's filesystem directory and URL base (where index.php lives)
+$moduleFsDir  = dirname($_SERVER['SCRIPT_FILENAME']);          // e.g. /var/www/html/DVWA/vulnerabilities/yourmod
+$moduleUrlDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');  // e.g. /DVWA/vulnerabilities/yourmod
+
+
+// Store uploads under the module dir so they are web-accessible
+$uploadDir = $moduleFsDir . '/uploads/svg/';
+$uploadUrl = $moduleUrlDir . '/uploads/svg/';
+
+
+if (!is_dir($uploadDir)) {
+   // liberal perms for demo; adjust in prod
+   mkdir($uploadDir, 0777, true);
+}
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
+   $file = $_FILES['file'];
+   $ext  = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+
+   if ($ext !== 'svg') {
+       $message = "❌ Only SVG files are allowed.";
+   } else {
+       $filename = uniqid('file_', true) . '.svg';
+       $target   = $uploadDir . $filename;
+
+
+       if (move_uploaded_file($file['tmp_name'], $target)) {
+           $viewUrl = $uploadUrl . $filename;
+           $safeUrl = htmlspecialchars($viewUrl, ENT_QUOTES, 'UTF-8');
+           $message = "✅ File uploaded!&lt;br&gt;&lt;iframe src='{$safeUrl}' style='width:100%; height:500px; border:none;'&gt;&lt;/iframe&gt;";
+       } else {
+           $message = "❌ Upload failed.";
+       }
+   }
+}
+
+
+$html = "
+&lt;form method='POST' enctype='multipart/form-data'&gt;
+   &lt;label&gt;Upload SVG File:&lt;/label&gt;&lt;br&gt;
+   &lt;input type='file' name='file' accept='.svg'&gt;&lt;br&gt;&lt;br&gt;
+   &lt;button type='submit'&gt;Upload&lt;/button&gt;
+&lt;/form&gt;
+";
+
+
+if ($message !== '') {
+   $color = (strpos($message, '✅') !== false) ? 'green' : 'red';
+   echo "&lt;div style='margin-top:15px; color:{$color};'&gt;{$message}&lt;/div&gt;";
+}
+
+
+$page['body'] .= "&lt;div class='body_padded'&gt;
+   &lt;h2&gt;Low Level - XSS via SVG Upload&lt;/h2&gt;
+   &lt;p&gt;This level allows uploading and directly rendering SVGs without any filtering. Try uploading an SVG with a script inside.&lt;/p&gt;
+   {$html}
+&lt;/div&gt;";
+
+?&gt;</pre>
+        </div>
+
+        <!-- Upload Panel -->
+        <div class="panel">
+            <div class="panel-title">📁 Upload SVG File</div>
+
+            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                <div class="form-group">
+                    <label>Select an SVG file to upload:</label>
+                    <label class="file-drop" for="fileInput" id="dropZone">
+                        <input type="file" id="fileInput" name="file" accept=".svg" required
+                            onchange="document.getElementById('fileSelected').textContent = this.files[0]?.name || ''">
+                        <div class="file-drop-icon">📄</div>
+                        <div class="file-drop-text">
+                            <strong>Click to browse</strong> or drag &amp; drop an SVG here
+                        </div>
+                        <div class="file-selected" id="fileSelected"></div>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-upload">⬆ Upload &amp; Render SVG</button>
+            </form>
+
+            {% if message %}
+            <div class="output-box output-{{ msg_color }}" style="margin-top:20px;">
+                {{ message | safe }}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Defence -->
+        <div class="panel">
+            <div class="panel-title">🛡️ How To Defend</div>
+            <div class="defence-tip">
+                <strong>Never render SVG files directly in the browser.</strong><br>
+                • Re-encode all image uploads as PNG/JPEG server-side (strips embedded scripts)<br>
+                • Use strict Content-Security-Policy: <code>script-src 'self'</code> to block inline scripts<br>
+                • Validate MIME type by reading file magic bytes, not just the extension<br>
+                • Use a Content-Disposition header to force downloads instead of inline rendering<br>
+                • Sandbox any iframe rendering untrusted content with <code>sandbox=""</code>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

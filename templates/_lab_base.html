@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Lab{% endblock %} — SecureSphere Labs</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap');
+        :root {
+            --bg: #00040e;
+            --border: rgba(0,140,255,0.3);
+            --accent: #00aaff;
+            --accent2: #00ffff;
+            --green: #00ff88;
+            --orange: #ff8c00;
+            --red: #ff3355;
+            --purple: #a855f7;
+            --text: #c9d8f0;
+            --dim: #4a6080;
+        }
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+        body::before{content:'';position:fixed;inset:0;z-index:-1;
+            background:radial-gradient(ellipse at 70% 10%,rgba(0,50,180,.20) 0%,transparent 55%),
+            radial-gradient(ellipse at 20% 80%,rgba(0,20,60,.25) 0%,transparent 55%),var(--bg)}
+        nav{height:60px;background:rgba(0,8,20,.85);border-bottom:1px solid var(--border);
+            backdrop-filter:blur(20px);display:flex;align-items:center;padding:0 28px;gap:16px;
+            position:sticky;top:0;z-index:100}
+        .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+        .nav-logo img{width:36px;height:36px;filter:drop-shadow(0 0 8px rgba(0,170,255,.6))}
+        .nav-brand{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;
+            background:linear-gradient(90deg,var(--accent),var(--accent2));
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .nav-back{margin-left:auto;color:var(--accent);text-decoration:none;font-size:13px;
+            font-weight:600;padding:6px 14px;border:1px solid rgba(0,170,255,.3);border-radius:6px;transition:.2s}
+        .nav-back:hover{background:rgba(0,170,255,.1);border-color:var(--accent2)}
+        .page{max-width:900px;margin:0 auto;padding:36px 20px 60px}
+        .lab-header{display:flex;align-items:flex-start;gap:18px;margin-bottom:28px}
+        .lab-icon{width:52px;height:52px;flex-shrink:0;
+            background:linear-gradient(135deg,rgba(0,80,200,.3),rgba(0,200,255,.15));
+            border:1px solid rgba(0,170,255,.4);border-radius:12px;display:flex;
+            align-items:center;justify-content:center;font-size:24px}
+        .lab-title h1{font-size:22px;font-weight:700;color:var(--accent2)}
+        .lab-meta{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+        .badge{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+            letter-spacing:.08em;padding:3px 10px;border-radius:20px;text-transform:uppercase}
+        .badge-low{background:rgba(0,255,136,.12);color:var(--green);border:1px solid rgba(0,255,136,.3)}
+        .badge-med{background:rgba(255,140,0,.12);color:var(--orange);border:1px solid rgba(255,140,0,.3)}
+        .badge-high{background:rgba(255,51,85,.12);color:var(--red);border:1px solid rgba(255,51,85,.3)}
+        .badge-impossible{background:rgba(168,85,247,.12);color:var(--purple);border:1px solid rgba(168,85,247,.3)}
+        .badge-vuln{background:rgba(255,204,0,.12);color:#ffcc00;border:1px solid rgba(255,204,0,.3)}
+        .panel{background:rgba(0,12,28,.7);border:1px solid var(--border);border-radius:14px;
+            padding:26px;margin-bottom:20px;backdrop-filter:blur(12px)}
+        .panel-title{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;
+            color:var(--dim);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+        .panel-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+        .info-box{background:rgba(0,100,200,.07);border:1px solid rgba(0,140,255,.2);
+            border-left:3px solid var(--accent);border-radius:8px;padding:14px 16px;
+            font-size:13px;line-height:1.7;color:rgba(200,220,255,.8);margin-bottom:18px}
+        .warn-box{background:rgba(255,140,0,.07);border:1px solid rgba(255,140,0,.2);
+            border-left:3px solid var(--orange);border-radius:8px;padding:14px 16px;
+            font-size:13px;line-height:1.7;color:rgba(255,220,150,.85);margin-bottom:18px}
+        .secure-box{background:rgba(168,85,247,.07);border:1px solid rgba(168,85,247,.2);
+            border-left:3px solid var(--purple);border-radius:8px;padding:14px 16px;
+            font-size:13px;line-height:1.7;color:rgba(220,180,255,.85);margin-bottom:18px}
+        .form-group{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+        .form-group label{font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;
+            text-transform:uppercase;letter-spacing:.08em}
+        .form-group input,.form-group select,.form-group textarea{width:100%;padding:14px 16px;
+            background:rgba(0,20,50,.6);border:2px solid rgba(0,140,255,.35);border-radius:8px;
+            color:var(--accent2);font-family:'JetBrains Mono',monospace;font-size:14px;
+            outline:none;transition:.2s}
+        .form-group input:focus,.form-group select:focus{border-color:var(--accent2);
+            box-shadow:0 0 15px rgba(0,255,255,.15)}
+        .form-row{display:flex;gap:12px}
+        .form-row .form-group{flex:1}
+        .btn{padding:12px 24px;background:linear-gradient(135deg,#0055ff,#00aaff);color:#fff;
+            font-weight:700;border:none;border-radius:8px;font-size:14px;cursor:pointer;
+            transition:.2s;box-shadow:0 4px 15px rgba(0,85,255,.3);text-decoration:none;
+            display:inline-block;text-align:center}
+        .btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,170,255,.4)}
+        .btn-danger{background:linear-gradient(135deg,#cc0022,#ff3355)}
+        .btn-danger:hover{box-shadow:0 8px 25px rgba(255,51,85,.4)}
+        .query-box{background:rgba(0,0,0,.6);border:1px solid rgba(0,255,255,.2);border-radius:8px;
+            padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:13px;
+            color:#ffcc00;margin-bottom:16px;white-space:pre-wrap;word-break:break-all}
+        .results-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+        .results-table th{padding:10px;background:rgba(0,140,255,.1);color:var(--accent);text-align:left}
+        .results-table td{padding:10px;border-bottom:1px solid rgba(255,255,255,.05)}
+        .results-table tr:hover td{background:rgba(0,140,255,.06)}
+        .flag-output{background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.4);
+            color:var(--green);font-weight:bold;font-size:18px;padding:20px;border-radius:8px;
+            text-align:center;margin-top:30px;box-shadow:0 0 30px rgba(0,255,136,.2);
+            font-family:'JetBrains Mono',monospace;animation:pulseFlag 2s infinite alternate}
+        @keyframes pulseFlag{from{box-shadow:0 0 20px rgba(0,255,136,.2)}to{box-shadow:0 0 40px rgba(0,255,136,.5)}}
+        .error-msg{color:var(--red);padding:12px;background:rgba(255,51,85,.08);
+            border:1px solid rgba(255,51,85,.3);border-radius:8px;margin-bottom:14px;font-size:13px}
+        .success-msg{color:var(--green);padding:12px;background:rgba(0,255,136,.08);
+            border:1px solid rgba(0,255,136,.3);border-radius:8px;margin-bottom:14px;font-size:13px}
+        .locked-msg{color:var(--purple);padding:14px;background:rgba(168,85,247,.08);
+            border:1px solid rgba(168,85,247,.3);border-radius:8px;margin-bottom:14px;font-size:13px;
+            text-align:center;font-family:'JetBrains Mono',monospace}
+        code{background:rgba(0,255,255,.08);padding:2px 6px;border-radius:4px;
+            font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent2)}
+        .hint-block{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);
+            border-top:1px solid rgba(255,255,255,.05);padding-top:14px;margin-top:14px}
+        .diff-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace}
+        .diff-low{background:rgba(0,255,136,.12);color:var(--green)}
+        .diff-med{background:rgba(255,140,0,.12);color:var(--orange)}
+        .diff-high{background:rgba(255,51,85,.12);color:var(--red)}
+        .diff-impossible{background:rgba(168,85,247,.12);color:var(--purple)}
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/dashboard" class="nav-logo">
+        <img src="https://cdn-icons-png.flaticon.com/512/2716/2716612.png" alt="SecureSphere">
+        <span class="nav-brand">SecureSphere Labs</span>
+    </a>
+    <a href="/dashboard" class="nav-back">← Dashboard</a>
+</nav>
+<div class="page">
+{% block content %}{% endblock %}
+</div>
+</body>
+</html>

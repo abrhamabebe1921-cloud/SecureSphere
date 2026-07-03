@@ -1,0 +1,48 @@
+{% extends "_lab_base.html" %}
+{% block title %}SSTI Lab (Medium){% endblock %}
+{% block content %}
+<div class="lab-header">
+    <div class="lab-icon">🧪</div>
+    <div class="lab-title">
+        <h1>Server-Side Template Injection (SSTI)</h1>
+        <div class="lab-meta">
+            <span class="badge badge-med">Medium</span>
+            <span class="badge badge-vuln">SSTI</span>
+        </div>
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">🎯 Objective</div>
+    <div class="warn-box">
+        The server now blocks keywords like <code>__class__</code>, <code>__mro__</code>, <code>__subclasses__</code>, and <code>config</code>.
+        However, basic <code>{{ }}</code> syntax is still accepted. Bypass the blocklist to trigger template rendering.
+    </div>
+    <div class="hint-block">
+        💡 Hint: Dangerous attribute lookups are blocked, but arithmetic expressions still work.<br>
+        Try: <code>{{'{{'}} 7*'7' {{'}}'}}</code> or <code>{{'{{'}} lipsum.__globals__ {{'}}'}}</code>
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">⚡ Medium — Keyword Blocklist</div>
+    <div class="query-box" style="color:#aaa; font-size:12px; margin-bottom:16px;">
+# Blocked keywords: __class__, __mro__, __subclasses__, config<br>
+# But {{ }} expressions still evaluated!
+    </div>
+    <form method="POST">
+        <div class="form-group">
+            <label>Template Input</label>
+            <input type="text" name="template" placeholder="e.g. {{ 7*7 }}" value="{{ request.form.get('template','') }}">
+        </div>
+        <button type="submit" class="btn">Render Template</button>
+    </form>
+    {% if result %}
+    <div style="margin-top:20px;">
+        <div class="panel-title">Output</div>
+        <div class="query-box" style="{% if 'Error' in result %}color:#ff3355{% else %}color:#00ffcc{% endif %};">{{ result }}</div>
+    </div>
+    {% endif %}
+    {% if flag_output %}
+    <div class="flag-output">🚩 FLAG: {{ flag_output }}</div>
+    {% endif %}
+</div>
+{% endblock %}

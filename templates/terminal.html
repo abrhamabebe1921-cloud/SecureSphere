@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/css/style_v4.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.css" />
-    <title>Terminal — ThreatMapper</title>
+    <title>Terminal — SecureSphere</title>
 </head>
 
 <body>
@@ -16,7 +16,7 @@
             <div class="sidebar-brand">
                 <span class="brand-icon">🛡️</span>
                 <div>
-                    <h2>THREATMAPPER</h2>
+                    <h2>SECURESPHERE</h2>
                     <span class="version">v2.0 Security Platform</span>
                 </div>
             </div>
@@ -54,7 +54,7 @@
                     <span class="terminal-dot red"></span>
                     <span class="terminal-dot yellow"></span>
                     <span class="terminal-dot green"></span>
-                    <span class="terminal-title">threatmapper@security:~$</span>
+                    <span class="terminal-title">securesphere@security:~$</span>
                 </div>
                 <div class="terminal-body" id="terminalOutput"
                     style="padding: 10px; height: 500px; overflow: hidden; background: #000;">
@@ -85,7 +85,7 @@
         term.fit(); // Automatically resize terminal to the div container bounds
         window.addEventListener('resize', () => { term.fit(); });
 
-        term.writeln('\\x1b[1;32mThreatMapper Terminal v2.0\\x1b[0m');
+        term.writeln('\\x1b[1;32mSecureSphere Terminal v2.0\\x1b[0m');
         term.writeln('\\x1b[1;30mInteractive Shell Started - Type commands naturally\\x1b[0m');
         term.writeln('───────────────────────────────────────────────────');
 

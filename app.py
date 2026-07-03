@@ -124,7 +124,7 @@ def _send_otp_email(code: str) -> bool:
     """Send a 6-digit OTP to the fixed verification address via Gmail SMTP."""
     try:
         msg = MIMEMultipart("alternative")
-        msg["Subject"] = "🔐 ThreatMapper — Your Verification Code"
+        msg["Subject"] = "🔐 SecureSphere — Your Verification Code"
         msg["From"] = _SMTP_SENDER
         msg["To"] = _VERIFY_EMAIL
 
@@ -133,7 +133,7 @@ def _send_otp_email(code: str) -> bool:
           <div style="text-align:center;margin-bottom:24px;">
             <div style="font-size:48px;">🛡️</div>
             <h1 style="font-size:20px;letter-spacing:0.2em;color:#00ff88;margin:8px 0;">THREATMAPPER</h1>
-            <p style="color:rgba(0,255,136,0.45);font-size:11px;margin:0;">Addis Ababa University · Security Lab</p>
+            <p style="color:rgba(0,255,136,0.45);font-size:11px;margin:0;">EACA SUMMIT 2026 HACKATHON · Security Lab</p>
           </div>
           <hr style="border:none;border-top:1px solid rgba(0,255,136,0.2);margin:20px 0;">
           <p style="color:rgba(255,255,255,0.7);font-size:13px;text-align:center;">Your one-time verification code is:</p>
@@ -148,12 +148,12 @@ def _send_otp_email(code: str) -> bool:
           </p>
           <hr style="border:none;border-top:1px solid rgba(0,255,136,0.1);margin:20px 0;">
           <p style="color:rgba(255,255,255,0.2);font-size:10px;text-align:center;">
-            © AAiT Cyber Security Lab · ThreatMapper
+            © EACA SUMMIT 2026 HACKATHON Cyber Security Lab · SecureSphere
           </p>
         </div>
         """
         plain_body = (
-            f"Your ThreatMapper verification code is: {code}\nValid for 60 seconds.")
+            f"Your SecureSphere verification code is: {code}\nValid for 60 seconds.")
 
         msg.attach(MIMEText(plain_body, "plain"))
         msg.attach(MIMEText(html_body, "html"))
@@ -268,561 +268,16 @@ def access_granted():
 
 
 # ── Lab Routes ──────────────────────────────────────────────
-@app.route("/aau/threatmapper/aaulab/ssti/low", methods=["GET", "POST"])
-@login_required
-def aaulab_ssti_low():
-    flag = "AAU{congratulations_you_exploited_ssti}"
-    template_input = ""
-    rendered_output = ""
-    error = None
-    flag_output = None
-
-    if request.method == "POST":
-        template_input = request.form.get("template", "")
-
-        # Build a small PHP wrapper that reads  template from an env var
-        import subprocess
-        import tempfile
-        import os as _os
-
-        wrapper = r"""<?php
-error_reporting(E_ERROR);
-$_SERVER['REQUEST_METHOD'] = 'POST';
-$_POST['template'] = getenv('SSTI_TPL');
-$page = ['body' => ''];
-ob_start();
-include(__DIR__ . '/vulnerabilities/SSTI/source/low.php');
-$_ = ob_get_clean();
-echo $output;
-"""
-        app_dir = _os.path.dirname(_os.path.abspath(__file__))
-        with tempfile.NamedTemporaryFile(
-            suffix=".php", mode="w", delete=False, dir="/tmp"
-        ) as f:
-            f.write(wrapper)
-            tmp_path = f.name
-
-        try:
-            env = _os.environ.copy()
-            env["SSTI_TPL"] = template_input
-            result = subprocess.run(
-                ["php", tmp_path],
-                capture_output=True,
-                text=True,
-                timeout=5,
-                cwd=app_dir,
-                env=env,
-            )
-            rendered_output = result.stdout.strip()
-
-            # Award flag for successful code execution
-            if any(
-                kw in rendered_output
-                for kw in ["uid=", "root:", "/etc/", "/home/", "bin/bash"]
-            ):
-                flag_output = flag
-
-        except Exception as e:
-            error = str(e)
-        finally:
-            try:
-                _os.unlink(tmp_path)
-            except Exception:
-                pass
-
-    return render_template(
-        "lab_ssti_low.html",
-        username=session.get("username"),
-        role=session.get("role"),
-        template_input=template_input,
-        rendered_output=rendered_output,
-        error=error,
-        flag_output=flag_output,
-    )
-
-@app.route("/aau/threatmapper/aaulab/sqli/low", methods=["GET", "POST"])
-@login_required
-def aaulab_sqli_low():
-
-    flag = "AAU{sqli_low_exploited}"
-    results = []
-    error = None
-    flag_output = None
-
-    if request.method == "POST":
-        user_id = request.form.get("id", "")
-
-        import sqlite3
-        import re
-
-        conn = sqlite3.connect(":memory:")
-        conn.row_factory = sqlite3.Row
-        c = conn.cursor()
-
-        c.execute("CREATE TABLE users (user_id TEXT, name TEXT, age TEXT, email TEXT, mobile TEXT, atm_pass TEXT, bank_account TEXT, balance TEXT)")
-
-        c.execute("INSERT INTO users VALUES ('1', 'admin', 'admin', 'admin@aau.edu.et', '0900000000', '0000', '1000000000000', '9999999')")
-        c.execute("INSERT INTO users VALUES ('2', 'Gordon Brown', '34', 'gordon@gmail.com', '0922222222', '1234', '1000000000001', '50000')")
-        c.execute("INSERT INTO users VALUES ('3', 'Hack Me', '21', 'hackme@gmail.com', '0933333333', '1337', '1000000000002', '75000')")
-        c.execute("INSERT INTO users VALUES ('4', 'Pablo Picasso', '65', 'pablo@gmail.com', '0944444444', '4321', '1000000000003', '250000')")
-        c.execute("INSERT INTO users VALUES ('5', 'abebe kebede', '42', 'kebede123@gmail.com', '0911121314', '6789', '1000000000004', '120000')")
-
-        conn.commit()
-
-        query = f"SELECT * FROM users WHERE user_id = '{user_id}';"
-
-        found = False
-        try:
-            c.execute(query)
-            rows = c.fetchall()
-            for row in rows:
-                results.append(dict(row))
-                found = True
-        except Exception as e:
-            error = f"Error in fetch: {str(e)}"
-
-        if not found and re.search(r"(or|--|;|\s)", user_id, re.IGNORECASE):
-            flag_output = flag
-
-    return render_template(
-        "lab_sqli_low.html",
-        username=session.get("username"),
-        role=session.get("role"),
-        results=results,
-        error=error,
-        flag_output=flag_output,
-        query=query,
-        user_id=user_id,
-    )
-
-@app.route("/aau/threatmapper/aaulab/sqli/medium", methods=["GET", "POST"])
-@login_required
-def aaulab_sqli_medium():
-
-    flag = "AAU{medium_level_sqli_exploited}"
-    results = []
-    error = None
-    flag_output = None
-    query = None
-    raw_user_id = ""
-    user_id = ""
-
-    if request.method == "POST":
-        raw_user_id = request.form.get("id", "")
-
-        # Simulate mysqli_real_escape_string
-        user_id = (
-            raw_user_id
-            .replace("\\", "\\\\")
-            .replace("'", "\\'")
-            .replace('"', '\\"')
-        )
-
-        import sqlite3
-        import re
-
-        conn = sqlite3.connect(":memory:")
-        conn.row_factory = sqlite3.Row
-        c = conn.cursor()
-
-        c.execute("CREATE TABLE users (user_id INTEGER, first_name TEXT, last_name TEXT)")
-        c.execute("INSERT INTO users VALUES (1, 'admin', 'admin')")
-        c.execute("INSERT INTO users VALUES (2, 'Gordon', 'Brown')")
-        c.execute("INSERT INTO users VALUES (3, 'Hack', 'Me')")
-        c.execute("INSERT INTO users VALUES (4, 'Pablo', 'Picasso')")
-        c.execute("INSERT INTO users VALUES (5, 'Kebede', 'Smith')")
-
-        conn.commit()
-
-        query = f"SELECT * FROM users WHERE user_id = {user_id};"
-
-        found = False
-        try:
-            if user_id.strip():
-                c.execute(query)
-                rows = c.fetchall()
-
-                for row in rows:
-                    results.append({
-                        "first_name": row["first_name"],
-                        "last_name": row["last_name"]
-                    })
-                    found = True
-
-        except Exception as e:
-            error = "Something went wrong."
-
-        if not found and re.search(r"(or|--|;|\s)", raw_user_id, re.IGNORECASE):
-            flag_output = flag
-
-    return render_template(
-        "lab_sqli_medium.html",
-        username=session.get("username"),
-        role=session.get("role"),
-        results=results,
-        error=error,
-        flag_output=flag_output,
-        query=query,
-        user_id=raw_user_id,
-    )
-@app.route("/aau/threatmapper/aaulab/sqli/high", methods=["GET", "POST"])
-@login_required
-def aaulab_sqli_high():
-
-    flag = "AAU{high_level_sqli_success}"
-    results = []
-    error = None
-    flag_output = None
-    query = None
-
-    if request.method == "POST":
-        session["sqli_id"] = request.form.get("id", "")
-        return redirect("/aau/threatmapper/aaulab/sqli/high")
-
-    user_id = session.get("sqli_id")
-
-    if user_id is not None:
-        import sqlite3
-        import re
-
-        conn = sqlite3.connect(":memory:")
-        conn.row_factory = sqlite3.Row
-        c = conn.cursor()
-
-        c.execute("CREATE TABLE users (user_id TEXT, name TEXT, age TEXT, email TEXT, mobile TEXT, atm_pass TEXT, bank_acc TEXT, amount TEXT)")
-
-        c.execute("INSERT INTO users VALUES ('1', 'admin', 'admin', 'admin@aau.edu.et', '0900000000', '0000', '1000000000000', '9999999')")
-        c.execute("INSERT INTO users VALUES ('2', 'Gordon Brown', '34', 'gordon@gmail.com', '0922222222', '1234', '1000022222222', '50000')")
-        c.execute("INSERT INTO users VALUES ('3', 'Hack Me', '21', 'hackme@gmail.com', '0933333333', '1337', '1000033333333', '10000')")
-        c.execute("INSERT INTO users VALUES ('4', 'Pablo Picasso', '65', 'pablo@gmail.com', '0944444444', '4321', '1000044444444', '150000')")
-        c.execute("INSERT INTO users VALUES ('5', 'abebe kebede', '42', 'kebede123@gmail.com', '0911121314', '6754', '1000035732047', '20000')")
-
-        conn.commit()
-
-        query = f"SELECT * FROM users WHERE user_id = '{user_id}' LIMIT 1;"
-
-        found = False
-        try:
-            c.execute(query)
-            rows = c.fetchall()
-            for row in rows:
-                results.append(dict(row))
-                found = True
-        except Exception:
-            error = "Something went wrong."
-
-        if not found and re.search(r"(\'|--|;|\s|or|and)", user_id, re.IGNORECASE):
-            flag_output = flag
-
-    return render_template(
-        "lab_sqli_high.html",
-        username=session.get("username"),
-        role=session.get("role"),
-        results=results,
-        error=error,
-        flag_output=flag_output,
-        query=query,
-        user_id=user_id or "",
-    )
-
-
-@app.route("/aau/threatmapper/aaulab/idor/low", methods=["GET", "POST"])
-@login_required
-def aaulab_idor_low():
-    flag = "AAU{idor_low_exploited}"
-    results = []
-    error = None
-    flag_output = None
-
-    # Pre-defined database mapping
-    students = {
-        "Abreham": {"pass": "passwd1", "id": "UGR/5788/16"},
-        "Hany": {"pass": "passwd2", "id": "UGR/6502/16"},
-        "Mikiyas": {"pass": "passwd3", "id": "UGR/2616/16"},
-        "Hermela": {"pass": "passwd4", "id": "UGR/6868/16"},
-    }
-
-    students_by_id = {v["id"]: k for k, v in students.items()}
-
-    logged_in_username = session.get("idor_username")
-
-    # Quick-login via GET ?quick=
-    quick = request.args.get("quick", "").strip()
-    if quick in students:
-        session["idor_username"] = quick
-        return redirect(
-            f"/aau/threatmapper/aaulab/idor/low?profile_id={students[quick]['id']}"
-        )
-
-    if request.method == "POST":
-        if "logout" in request.form:
-            session.pop("idor_username", None)
-            return redirect("/aau/threatmapper/aaulab/idor/low")
-
-        post_user = request.form.get("username", "").strip()
-        post_pass = request.form.get("password", "").strip()
-
-        if post_user in students and students[post_user]["pass"] == post_pass:
-            session["idor_username"] = post_user
-            return redirect(
-                f"/aau/threatmapper/aaulab/idor/low?profile_id={students[post_user]['id']}"
-            )
-        else:
-            error = "Invalid Username or Password."
-
-    view_profile_id = request.args.get("profile_id", "").strip()
-    profile_data = {}
-
-    if logged_in_username and view_profile_id:
-        if view_profile_id in students_by_id:
-            profile_name = students_by_id[view_profile_id]
-            import hashlib
-            import random
-
-            courses = ["physics", "maths", "geograpy", "history"]
-            possible_grades = ["A+", "a", "A-", "B+", "B", "B-", "C+", "C"]
-            seed = int(hashlib.md5(view_profile_id.encode()).hexdigest(), 16)
-            rng = random.Random(seed)
-            for course in courses:
-                results.append(
-                    {"course": course, "grade": rng.choice(possible_grades)})
-
-            profile_data = {
-                "id": view_profile_id,
-                "name": profile_name,
-                "role": "User",
-                "grades": results,
-            }
-
-            if logged_in_username != profile_name:
-                flag_output = flag
-        else:
-            error = "Profile not found in the university database."
-
-    return render_template(
-        "lab_idor_low.html",
-        username=session.get("username"),
-        role=session.get("role"),
-        logged_in_user=logged_in_username,
-        view_profile_id=view_profile_id,
-        profile_data=profile_data,
-        error=error,
-        flag_output=flag_output,
-    )
-
-
-@app.route("/aau/threatmapper/aaulab/idor/medium", methods=["GET", "POST"])
-@login_required
-def aaulab_idor_medium():
-    flag = "AAU{idor_medium_cookie_exploited}"
-    results = []
-    error = None
-    flag_output = None
-
-    students = {
-        "Abreham": {"pass": "passwd1", "id": "UGR/5788/16"},
-        "Hany": {"pass": "passwd2", "id": "UGR/6502/16"},
-        "Mikiyas": {"pass": "passwd3", "id": "UGR/2616/16"},
-        "Hermela": {"pass": "passwd4", "id": "UGR/6868/16"},
-    }
-
-    actual_user = session.get("idor_med_actual_user")
-
-    # Quick-login via GET ?quick=
-    quick = request.args.get("quick", "").strip()
-    if quick in students:
-        session["idor_med_actual_user"] = quick
-        import base64
-
-        tok = base64.b64encode(f"User-{quick}".encode()).decode()
-        res = redirect("/aau/threatmapper/aaulab/idor/medium")
-        res.set_cookie("idor_token", tok)
-        return res
-    if request.method == "POST":
-        if "logout" in request.form:
-            session.pop("idor_med_actual_user", None)
-            res = redirect("/aau/threatmapper/aaulab/idor/medium")
-            res.delete_cookie("idor_token")
-            return res
-
-        post_user = request.form.get("username", "").strip()
-        post_pass = request.form.get("password", "").strip()
-
-        if post_user in students and students[post_user]["pass"] == post_pass:
-            session["idor_med_actual_user"] = post_user
-            import base64
-
-            tok = base64.b64encode(f"User-{post_user}".encode()).decode()
-            res = redirect("/aau/threatmapper/aaulab/idor/medium")
-            res.set_cookie("idor_token", tok)
-            return res
-        else:
-            error = "Invalid Username or Password."
-
-    cookie_val = request.cookies.get("idor_token", "")
-    profile_data = {}
-    view_username = None
-
-    if cookie_val:
-        import base64
-
-        try:
-            decoded = base64.b64decode(cookie_val).decode("utf-8")
-            if decoded.startswith("User-"):
-                view_username = decoded[5:]
-            else:
-                error = "Malformed cookie value. Expected base64('User-{Username}')."
-        except Exception:
-            error = "Failed to decode cookie token."
-
-    if view_username:
-        if view_username in students:
-            profile_name = view_username
-            profile_id = students[view_username]["id"]
-            import hashlib
-            import random
-
-            courses = ["physics", "maths", "geograpy", "history"]
-            possible_grades = ["A+", "a", "A-", "B+", "B", "B-", "C+", "C"]
-            seed = int(hashlib.md5(profile_id.encode()).hexdigest(), 16)
-            rng = random.Random(seed)
-            for course in courses:
-                results.append(
-                    {"course": course, "grade": rng.choice(possible_grades)})
-
-            profile_data = {
-                "id": profile_id,
-                "name": profile_name,
-                "role": "User",
-                "grades": results,
-            }
-
-            if actual_user and actual_user != view_username:
-                flag_output = flag
-        else:
-            error = f"No user found for username: {view_username}"
-
-    return render_template(
-        "lab_idor_medium.html",
-        username=session.get("username"),
-        role=session.get("role"),
-        logged_in_user=actual_user,
-        profile_data=profile_data,
-        cookie_val=cookie_val,
-        error=error,
-        flag_output=flag_output,
-    )
-
-
-@app.route("/aau/threatmapper/aaulab/idor/high", methods=["GET", "POST"])
-@login_required
-def aaulab_idor_high():
-    flag = "AAU{idor_high_uuid_exploited}"
-    results = []
-    error = None
-    flag_output = None
-
-    students = {
-        "Abreham": {
-            "pass": "passwd1",
-            "uuid": "11111111-1111-4111-8111-111111111111"},
-        "Hany": {
-            "pass": "passwd2",
-            "uuid": "22222222-2222-4222-8222-222222222222"},
-        "Mikiyas": {
-            "pass": "passwd3",
-            "uuid": "33333333-3333-4333-8333-333333333333"},
-        "Hermela": {
-            "pass": "passwd4",
-                    "uuid": "44444444-4444-4444-8444-444444444444"},
-    }
-
-    students_by_uuid = {v["uuid"]: k for k, v in students.items()}
-    logged_in_username = session.get("idor_high_actual_user")
-
-    # Quick-login via GET ?quick=
-    quick = request.args.get("quick", "").strip()
-    if quick in students:
-        session["idor_high_actual_user"] = quick
-        return redirect(
-            f"/aau/threatmapper/aaulab/idor/high?uuid={students[quick]['uuid']}"
-        )
-
-    if request.method == "POST":
-        if "logout" in request.form:
-            session.pop("idor_high_actual_user", None)
-            return redirect("/aau/threatmapper/aaulab/idor/high")
-
-        post_user = request.form.get("username", "").strip()
-        post_pass = request.form.get("password", "").strip()
-
-        if post_user in students and students[post_user]["pass"] == post_pass:
-            session["idor_high_actual_user"] = post_user
-            return redirect(
-                f"/aau/threatmapper/aaulab/idor/high?uuid={students[post_user]['uuid']}"
-            )
-        else:
-            error = "Invalid Username or Password."
-
-    view_uuid = request.args.get("uuid", "").strip()
-    profile_data = {}
-
-    if logged_in_username and not view_uuid and not error:
-        return redirect(
-            f"/aau/threatmapper/aaulab/idor/high?uuid={students[logged_in_username]['uuid']}"
-        )
-
-    if logged_in_username and view_uuid:
-        if view_uuid in students_by_uuid:
-            profile_name = students_by_uuid[view_uuid]
-            import hashlib
-            import random
-
-            courses = ["physics", "maths", "geograpy", "history"]
-            possible_grades = ["A+", "a", "A-", "B+", "B", "B-", "C+", "C"]
-            seed = int(hashlib.md5(view_uuid.encode()).hexdigest(), 16)
-            rng = random.Random(seed)
-            for course in courses:
-                results.append(
-                    {"course": course, "grade": rng.choice(possible_grades)})
-
-            profile_data = {
-                "id": view_uuid,
-                "name": profile_name,
-                "role": "User",
-                "grades": results,
-            }
-
-            if logged_in_username != profile_name:
-                flag_output = flag
-        else:
-            error = "Profile not found for the provided UUID."
-
-    return render_template(
-        "lab_idor_high.html",
-        username=session.get("username"),
-        role=session.get("role"),
-        logged_in_user=logged_in_username,
-        view_uuid=view_uuid,
-        profile_data=profile_data,
-        error=error,
-        flag_output=flag_output,
-    )
-
-
-@app.route("/aau/threatmapper/aaulab/xss_low", methods=["GET", "POST"])
+@app.route("/labs/xss_low", methods=["GET", "POST"])
 @login_required
 def aaulab_xss_low():
-    flag = "AAU{xss_reflected_low_exploited}"
+    flag = "FLAG{xss_reflected_low_exploited}"
     error = None
     # Simple user credentials similar to IDOR lab
     users = {
-        "Hermela": {"pass": "passwd4", "role": "Admin"},
-        "Abreham": {"pass": "passwd1", "role": "User"},
-        "Hany": {"pass": "passwd2", "role": "User"},
-        "Mikiyas": {"pass": "passwd3", "role": "User"},
-        "Bikila": {"pass": "passwd5", "role": "User"},
-        "Mastewal": {"pass": "passwd6", "role": "User"},
+        "Abreham": {"pass": "passwd1", "role": "Admin"},
+        "Tesfabesh": {"pass": "passwd2", "role": "User"},
+        "Natty": {"pass": "passwd3", "role": "User"},
     }
     # ── Session Management ──
     import uuid
@@ -837,7 +292,7 @@ def aaulab_xss_low():
     if quick in users:
         session["xss_username"] = quick
         sid = create_lab_session(quick, users[quick]["role"])
-        resp = redirect("/aau/threatmapper/aaulab/xss_low")
+        resp = redirect("/labs/xss_low")
         resp.set_cookie("XSS_SESSION_ID", sid, httponly=False, samesite="Lax")
         return resp
 
@@ -847,7 +302,7 @@ def aaulab_xss_low():
             sid = request.cookies.get("XSS_SESSION_ID")
             if sid in _XSS_SESSIONS:
                 del _XSS_SESSIONS[sid]
-            resp = redirect("/aau/threatmapper/aaulab/xss_low")
+            resp = redirect("/labs/xss_low")
             resp.delete_cookie("XSS_SESSION_ID")
             return resp
         post_user = request.form.get("username", "").strip()
@@ -855,7 +310,7 @@ def aaulab_xss_low():
         if post_user in users and users[post_user]["pass"] == post_pass:
             session["xss_username"] = post_user
             sid = create_lab_session(post_user, users[post_user]["role"])
-            resp = redirect("/aau/threatmapper/aaulab/xss_low")
+            resp = redirect("/labs/xss_low")
             resp.set_cookie(
                 "XSS_SESSION_ID",
                 sid,
@@ -889,10 +344,10 @@ def aaulab_xss_low():
     )
 
 
-@app.route("/aau/threatmapper/aaulab/xss_medium", methods=["GET", "POST"])
+@app.route("/labs/xss_medium", methods=["GET", "POST"])
 @login_required
 def aaulab_xss_medium():
-    flag = "AAU{xss_reflected_medium_exploited}"
+    flag = "FLAG{xss_reflected_medium_exploited}"
     name = request.args.get("name")
     flag_output = None
     if name:
@@ -906,10 +361,10 @@ def aaulab_xss_medium():
     )
 
 
-@app.route("/aau/threatmapper/aaulab/xss_high", methods=["GET", "POST"])
+@app.route("/labs/xss_high", methods=["GET", "POST"])
 @login_required
 def aaulab_xss_high():
-    flag = "AAU{xss_reflected_high_exploited}"
+    flag = "FLAG{xss_reflected_high_exploited}"
     name = request.args.get("name")
     flag_output = None
     if name:
@@ -1038,7 +493,7 @@ def _find_jwt_user_by_id(uid):
 # JWT LOW — alg=none bypass
 # ─────────────────────────────────────────────────────────────
 _JWT_LOW_SECRET = "supersecretkey-change-me"
-_FLAG_JWT_LOW = "AAU{jwt_alg_none_exploited}"
+_FLAG_JWT_LOW = "FLAG{jwt_alg_none_exploited}"
 
 
 def _issue_jwt_low(user: dict) -> str:
@@ -1076,7 +531,7 @@ _QUICK_CREDS = {
 }
 
 
-@app.route("/aau/threatmapper/aaulab/jwt_low", methods=["GET", "POST"])
+@app.route("/labs/jwt_low", methods=["GET", "POST"])
 @login_required
 def aaulab_jwt_low():
     error = None
@@ -1094,7 +549,7 @@ def aaulab_jwt_low():
         found = _find_jwt_user(uname, passwd)
         if found:
             token = _issue_jwt_low(found)
-            resp = redirect("/aau/threatmapper/aaulab/jwt_low")
+            resp = redirect("/labs/jwt_low")
             resp.set_cookie(
                 "jwt_low", token, httponly=False, samesite="Lax", max_age=3600
             )
@@ -1102,7 +557,7 @@ def aaulab_jwt_low():
     # ── Lab actions ──
     if request.method == "POST":
         if "jwtl_clear" in request.form:
-            resp = redirect("/aau/threatmapper/aaulab/jwt_low")
+            resp = redirect("/labs/jwt_low")
             resp.delete_cookie("jwt_low")
             return resp
         if "jwtl_login" in request.form:
@@ -1111,7 +566,7 @@ def aaulab_jwt_low():
             found = _find_jwt_user(uname, passwd)
             if found:
                 token = _issue_jwt_low(found)
-                resp = redirect("/aau/threatmapper/aaulab/jwt_low")
+                resp = redirect("/labs/jwt_low")
                 resp.set_cookie(
                     "jwt_low",
                     token,
@@ -1169,7 +624,7 @@ def aaulab_jwt_low():
 # JWT MEDIUM — Secure HS256 (alg enforced, temporal claims)
 # ─────────────────────────────────────────────────────────────
 _JWT_MED_SECRET = "S3cur3-L0ng-Rand0m-Pr0d-S3cret!"
-_FLAG_JWT_MEDIUM = "AAU{jwt_secure_hs256_reference}"
+_FLAG_JWT_MEDIUM = "FLAG{jwt_secure_hs256_reference}"
 _TOKEN_TTL = 3600
 _SKEW = 60
 
@@ -1217,7 +672,7 @@ def _verify_jwt_medium(token: str):
     return True, payload, ""
 
 
-@app.route("/aau/threatmapper/aaulab/jwt_medium", methods=["GET", "POST"])
+@app.route("/labs/jwt_medium", methods=["GET", "POST"])
 @login_required
 def aaulab_jwt_medium():
     error = None
@@ -1235,7 +690,7 @@ def aaulab_jwt_medium():
         found = _find_jwt_user(uname, passwd)
         if found:
             token = _issue_jwt_medium(found)
-            resp = redirect("/aau/threatmapper/aaulab/jwt_medium")
+            resp = redirect("/labs/jwt_medium")
             resp.set_cookie(
                 "jwt_medium",
                 token,
@@ -1247,7 +702,7 @@ def aaulab_jwt_medium():
     # ── Lab actions ──
     if request.method == "POST":
         if "jwtm_clear" in request.form:
-            resp = redirect("/aau/threatmapper/aaulab/jwt_medium")
+            resp = redirect("/labs/jwt_medium")
             resp.delete_cookie("jwt_medium")
             return resp
         if "jwtm_login" in request.form:
@@ -1256,7 +711,7 @@ def aaulab_jwt_medium():
             found = _find_jwt_user(uname, passwd)
             if found:
                 token = _issue_jwt_medium(found)
-                resp = redirect("/aau/threatmapper/aaulab/jwt_medium")
+                resp = redirect("/labs/jwt_medium")
                 resp.set_cookie(
                     "jwt_medium",
                     token,
@@ -1321,7 +776,7 @@ try:
 except ImportError:
     _CRYPTO_OK = False
 
-_FLAG_JWT_HIGH = "AAU{jwt_rs256_hs256_confusion_exploited}"
+_FLAG_JWT_HIGH = "FLAG{jwt_rs256_hs256_confusion_exploited}"
 _HIGH_KEY_DIR = os.path.join(os.path.dirname(__file__), "jwt_high_keys")
 _HIGH_PRIV_PEM = os.path.join(_HIGH_KEY_DIR, "private.pem")
 _HIGH_PUB_PEM = os.path.join(_HIGH_KEY_DIR, "public.pem")
@@ -1486,7 +941,7 @@ def _verify_jwt_high(token: str, pub_pem: str, expected_kid: str = None):
     return False, None, "Unsupported alg"
 
 
-@app.route("/aau/threatmapper/aaulab/jwt_high", methods=["GET", "POST"])
+@app.route("/labs/jwt_high", methods=["GET", "POST"])
 @login_required
 def aaulab_jwt_high():
     error = None
@@ -1510,7 +965,7 @@ def aaulab_jwt_high():
         found = _find_jwt_user(uname, passwd)
         if found:
             token = _issue_jwt_high(found, _kid, _priv_pem)
-            resp = redirect("/aau/threatmapper/aaulab/jwt_high")
+            resp = redirect("/labs/jwt_high")
             resp.set_cookie(
                 "jwt_high", token, httponly=False, samesite="Lax", max_age=3600
             )
@@ -1518,7 +973,7 @@ def aaulab_jwt_high():
 
     if request.method == "POST":
         if "jwth_clear" in request.form:
-            resp = redirect("/aau/threatmapper/aaulab/jwt_high")
+            resp = redirect("/labs/jwt_high")
             resp.delete_cookie("jwt_high")
             return resp
         if "jwth_login" in request.form:
@@ -1527,7 +982,7 @@ def aaulab_jwt_high():
             found = _find_jwt_user(uname, passwd)
             if found and _priv_pem and _kid:
                 token = _issue_jwt_high(found, _kid, _priv_pem)
-                resp = redirect("/aau/threatmapper/aaulab/jwt_high")
+                resp = redirect("/labs/jwt_high")
                 resp.set_cookie(
                     "jwt_high",
                     token,
@@ -1588,7 +1043,7 @@ def aaulab_jwt_high():
     )
 
 
-@app.route("/aau/threatmapper/aaulab/jwt_high/jwks")
+@app.route("/labs/jwt_high/jwks")
 def jwt_high_jwks():
     """Public JWKS endpoint — exposes RSA public key for the high lab."""
     _, _, jwks, _ = _load_high_keys()
@@ -1624,10 +1079,10 @@ def private_info():
     return render_template("private_info.html", info=info)
 
 
-@app.route("/aau/threatmapper/aaulab/bruteforce/low", methods=["GET", "POST"])
+@app.route("/labs/bruteforce/low", methods=["GET", "POST"])
 @login_required
 def aaulab_bruteforce_low():
-    flag = "AAU{bruteforce_low_exploited}"
+    flag = "FLAG{bruteforce_low_exploited}"
     error = None
     flag_output = None
     if "Login" in request.args:
@@ -1646,11 +1101,11 @@ def aaulab_bruteforce_low():
     )
 
 
-@app.route("/aau/threatmapper/aaulab/bruteforce/medium",
+@app.route("/labs/bruteforce/medium",
            methods=["GET", "POST"])
 @login_required
 def aaulab_bruteforce_medium():
-    flag = "AAU{bruteforce_medium_exploited}"
+    flag = "FLAG{bruteforce_medium_exploited}"
     error = None
     flag_output = None
     if "Login" in request.args:
@@ -1672,10 +1127,10 @@ def aaulab_bruteforce_medium():
     )
 
 
-@app.route("/aau/threatmapper/aaulab/bruteforce/high", methods=["GET", "POST"])
+@app.route("/labs/bruteforce/high", methods=["GET", "POST"])
 @login_required
 def aaulab_bruteforce_high():
-    flag = "AAU{bruteforce_high_exploited}"
+    flag = "FLAG{bruteforce_high_exploited}"
     error = None
     flag_output = None
     import uuid
@@ -1708,7 +1163,499 @@ def aaulab_bruteforce_high():
     )
 
 
+# ─────────────────────────────────────────────────────────────
+# SSTI Lab Routes
+# ─────────────────────────────────────────────────────────────
+
+@app.route("/labs/ssti/low", methods=["GET", "POST"])
+@login_required
+def aaulab_ssti_low():
+    flag = "FLAG{ssti_low_jinja2_template_injection}"
+    result = None
+    if request.method == "POST":
+        template_input = request.form.get("template", "")
+        # Low: no sanitization — raw Jinja2 render (simulated, safe demo)
+        if "{{" in template_input and "}}" in template_input:
+            result = "RENDERED: " + template_input
+            flag_output = flag
+        else:
+            result = "RENDERED: " + template_input
+            flag_output = None
+        return render_template(
+            "lab_ssti_low.html",
+            result=result,
+            flag_output=flag_output if "{{" in template_input else None,
+            username=session.get("username"),
+            role=session.get("role"),
+        )
+    return render_template(
+        "lab_ssti_low.html",
+        result=None,
+        flag_output=None,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+@app.route("/labs/ssti/medium", methods=["GET", "POST"])
+@login_required
+def aaulab_ssti_medium():
+    flag = "FLAG{ssti_medium_bypassed_blocklist}"
+    result = None
+    flag_output = None
+    if request.method == "POST":
+        template_input = request.form.get("template", "")
+        # Medium: blocks simple {{ but not clever bypasses
+        blocked = ["__class__", "__mro__", "__subclasses__", "config"]
+        if any(b in template_input for b in blocked):
+            result = "Error: Potentially dangerous keyword detected."
+        elif "{{" in template_input:
+            result = "RENDERED: " + template_input
+            flag_output = flag
+        else:
+            result = "RENDERED: " + template_input
+    return render_template(
+        "lab_ssti_medium.html",
+        result=result,
+        flag_output=flag_output,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+@app.route("/labs/ssti/high", methods=["GET", "POST"])
+@login_required
+def aaulab_ssti_high():
+    flag = "FLAG{ssti_high_escaped_filter_bypass}"
+    result = None
+    flag_output = None
+    if request.method == "POST":
+        import re
+        template_input = request.form.get("template", "")
+        # High: strips {{ and }} but bypass possible with encoding tricks
+        cleaned = re.sub(r"\{\{.*?\}\}", "[FILTERED]", template_input)
+        if "[FILTERED]" not in cleaned and ("{{" in template_input or "}}" in template_input):
+            flag_output = flag
+        result = "RENDERED: " + cleaned
+    return render_template(
+        "lab_ssti_high.html",
+        result=result,
+        flag_output=flag_output,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+@app.route("/labs/ssti/impossible", methods=["GET", "POST"])
+@login_required
+def aaulab_ssti_impossible():
+    result = None
+    if request.method == "POST":
+        import html
+        template_input = request.form.get("template", "")
+        # Impossible: HTML-escape everything; no injection possible
+        result = "RENDERED: " + html.escape(template_input)
+    return render_template(
+        "lab_ssti_impossible.html",
+        result=result,
+        flag_output=None,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+# ─────────────────────────────────────────────────────────────
+# SQL Injection Lab Routes (simulated in-memory, no real DB)
+# ─────────────────────────────────────────────────────────────
+
+_SQL_USERS = [
+    {"id": 1, "username": "admin", "password": "supersecret123", "role": "admin"},
+    {"id": 2, "username": "alice",  "password": "alice2024",       "role": "user"},
+    {"id": 3, "username": "bob",    "password": "b0bPass!",         "role": "user"},
+]
+
+
+@app.route("/labs/sqli/low", methods=["GET", "POST"])
+@login_required
+def aaulab_sqli_low():
+    flag = "FLAG{sql_injection_low_classic_bypass}"
+    results = []
+    flag_output = None
+    query_display = ""
+    if request.method == "POST":
+        username = request.form.get("username", "")
+        query_display = f"SELECT * FROM users WHERE username = '{username}'"
+        # Low: no sanitization; detect ' OR-style injection
+        if "'" in username or "or" in username.lower() or "1=1" in username:
+            results = _SQL_USERS
+            flag_output = flag
+        else:
+            results = [u for u in _SQL_USERS if u["username"] == username]
+    return render_template(
+        "lab_sqli_low.html",
+        results=results,
+        flag_output=flag_output,
+        query_display=query_display,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+@app.route("/labs/sqli/medium", methods=["GET", "POST"])
+@login_required
+def aaulab_sqli_medium():
+    flag = "FLAG{sql_injection_medium_bypass_filter}"
+    results = []
+    flag_output = None
+    query_display = ""
+    if request.method == "POST":
+        username = request.form.get("username", "").replace("'", "\\'")
+        query_display = f"SELECT * FROM users WHERE username = '{username}'"
+        # Medium: single-quotes escaped but UNION still works via numeric id
+        user_id = request.form.get("user_id", "")
+        if user_id and not user_id.isdigit():
+            flag_output = flag
+            results = _SQL_USERS
+        elif user_id:
+            results = [u for u in _SQL_USERS if str(u["id"]) == user_id]
+        else:
+            results = [u for u in _SQL_USERS if u["username"] == username.replace("\\'", "'")]
+    return render_template(
+        "lab_sqli_medium.html",
+        results=results,
+        flag_output=flag_output,
+        query_display=query_display,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+@app.route("/labs/sqli/high", methods=["GET", "POST"])
+@login_required
+def aaulab_sqli_high():
+    flag = "FLAG{sql_injection_high_second_order}"
+    results = []
+    flag_output = None
+    query_display = ""
+    # High: simulates second-order injection via stored username
+    stored = session.get("sqli_stored_username", "")
+    if request.method == "POST":
+        action = request.form.get("action", "")
+        if action == "store":
+            stored = request.form.get("username", "")
+            session["sqli_stored_username"] = stored
+            query_display = f"INSERT INTO users (username) VALUES ('{stored}')"
+        elif action == "search":
+            # The stored value is now used unsanitized in a second query
+            query_display = f"SELECT * FROM users WHERE username = '{stored}'"
+            if "'" in stored or "or" in stored.lower():
+                results = _SQL_USERS
+                flag_output = flag
+            else:
+                results = [u for u in _SQL_USERS if u["username"] == stored]
+    return render_template(
+        "lab_sqli_high.html",
+        results=results,
+        flag_output=flag_output,
+        query_display=query_display,
+        stored_username=stored,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+@app.route("/labs/sqli/impossible", methods=["GET", "POST"])
+@login_required
+def aaulab_sqli_impossible():
+    results = []
+    query_display = ""
+    if request.method == "POST":
+        username = request.form.get("username", "")
+        # Impossible: parameterized query simulation — exact match only
+        query_display = "SELECT * FROM users WHERE username = ? (parameterized)"
+        results = [u for u in _SQL_USERS if u["username"] == username]
+    return render_template(
+        "lab_sqli_impossible.html",
+        results=results,
+        flag_output=None,
+        query_display=query_display,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+# ─────────────────────────────────────────────────────────────
+# JWT Attack Lab — bridge existing routes + add Impossible
+# ─────────────────────────────────────────────────────────────
+
+@app.route("/labs/jwt/low")
+@login_required
+def aaulab_jwt_low_redirect():
+    return redirect("/labs/jwt_low")
+
+
+@app.route("/labs/jwt/medium")
+@login_required
+def aaulab_jwt_medium_redirect():
+    return redirect("/labs/jwt_medium")
+
+
+@app.route("/labs/jwt/high")
+@login_required
+def aaulab_jwt_high_redirect():
+    return redirect("/labs/jwt_high")
+
+
+@app.route("/labs/jwt/impossible", methods=["GET", "POST"])
+@login_required
+def aaulab_jwt_impossible():
+    return render_template(
+        "lab_jwt_impossible.html",
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+# ─────────────────────────────────────────────────────────────
+# IDOR Lab Routes
+# ─────────────────────────────────────────────────────────────
+
+_IDOR_USERS = {
+    "1": {"name": "Admin User",   "email": "admin@lab.local",  "role": "admin",  "bank": "ET1234567890", "flag": "FLAG{idor_low_direct_object_reference}"},
+    "2": {"name": "Alice Johnson","email": "alice@lab.local",  "role": "user",   "bank": "ET2345678901", "flag": None},
+    "3": {"name": "Bob Smith",    "email": "bob@lab.local",    "role": "user",   "bank": "ET3456789012", "flag": None},
+    "4": {"name": "Carol White",  "email": "carol@lab.local",  "role": "analyst","bank": "ET4567890123", "flag": None},
+}
+
+
+@app.route("/labs/idor/low", methods=["GET"])
+@login_required
+def aaulab_idor_low():
+    user_id = request.args.get("id", "2")  # Default: logged-in user (id=2)
+    # Low: No access control; any user_id works
+    profile = _IDOR_USERS.get(user_id)
+    flag_output = profile.get("flag") if profile else None
+    return render_template(
+        "lab_idor_low.html",
+        profile=profile,
+        user_id=user_id,
+        current_id="2",
+        flag_output=flag_output,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+@app.route("/labs/idor/medium", methods=["GET"])
+@login_required
+def aaulab_idor_medium():
+    flag = "FLAG{idor_medium_indirect_reference}"
+    # Medium: Uses hashed IDs — MD5 of numeric id
+    import hashlib
+    hashed_id = request.args.get("id", hashlib.md5(b"2").hexdigest())
+    # Reverse lookup
+    profile = None
+    found_id = None
+    for real_id, data in _IDOR_USERS.items():
+        if hashlib.md5(real_id.encode()).hexdigest() == hashed_id:
+            profile = data
+            found_id = real_id
+            break
+    flag_output = flag if found_id == "1" else None
+    # Provide the current user's hash
+    current_hash = hashlib.md5(b"2").hexdigest()
+    return render_template(
+        "lab_idor_medium.html",
+        profile=profile,
+        hashed_id=hashed_id,
+        current_hash=current_hash,
+        flag_output=flag_output,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+@app.route("/labs/idor/high", methods=["GET"])
+@login_required
+def aaulab_idor_high():
+    flag = "FLAG{idor_high_predictable_token}"
+    # High: Token-based but still predictable (base64 of id)
+    token = request.args.get("token", base64.b64encode(b"2").decode())
+    try:
+        real_id = base64.b64decode(token).decode()
+    except Exception:
+        real_id = "2"
+    profile = _IDOR_USERS.get(real_id)
+    flag_output = flag if real_id == "1" else None
+    current_token = base64.b64encode(b"2").decode()
+    return render_template(
+        "lab_idor_high.html",
+        profile=profile,
+        token=token,
+        current_token=current_token,
+        flag_output=flag_output,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+@app.route("/labs/idor/impossible", methods=["GET"])
+@login_required
+def aaulab_idor_impossible():
+    # Impossible: Can only view own profile; no parameter accepted
+    profile = _IDOR_USERS.get("2")  # Always serves fixed user
+    return render_template(
+        "lab_idor_impossible.html",
+        profile=profile,
+        flag_output=None,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+# ─────────────────────────────────────────────────────────────
+# BOLA Lab Routes (API-style broken object-level authorization)
+# ─────────────────────────────────────────────────────────────
+
+_BOLA_ORDERS = {
+    "101": {"owner_id": "2", "item": "iPhone 15 Pro",    "total": "$999",  "status": "shipped", "flag": None},
+    "102": {"owner_id": "1", "item": "Admin License Key","total": "$4999", "status": "pending", "flag": "FLAG{bola_low_unauthorized_api_access}"},
+    "103": {"owner_id": "3", "item": "MacBook Pro M3",   "total": "$2499", "status": "shipped", "flag": None},
+    "104": {"owner_id": "4", "item": "Security Report",  "total": "$599",  "status": "draft",   "flag": None},
+}
+
+
+@app.route("/labs/bola/low", methods=["GET"])
+@login_required
+def aaulab_bola_low():
+    order_id = request.args.get("order_id", "101")
+    # Low: No ownership check; any order ID accessible
+    order = _BOLA_ORDERS.get(order_id)
+    flag_output = order.get("flag") if order else None
+    return render_template(
+        "lab_bola_low.html",
+        order=order,
+        order_id=order_id,
+        flag_output=flag_output,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+@app.route("/labs/bola/medium", methods=["GET"])
+@login_required
+def aaulab_bola_medium():
+    flag = "FLAG{bola_medium_weak_role_check}"
+    order_id = request.args.get("order_id", "101")
+    # Medium: checks role in header but header can be spoofed (mocked via GET arg for demo)
+    role_header = request.args.get("role_header") or request.headers.get("X-User-Role", "user")
+    order = _BOLA_ORDERS.get(order_id)
+    flag_output = None
+    if order:
+        if role_header == "admin" or order.get("owner_id") == "2":
+            flag_output = flag if order_id == "102" else None
+    return render_template(
+        "lab_bola_medium.html",
+        order=order,
+        order_id=order_id,
+        flag_output=flag_output,
+        role_header=role_header,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+@app.route("/labs/bola/high", methods=["GET"])
+@login_required
+def aaulab_bola_high():
+    flag = "FLAG{bola_high_uuid_still_insecure}"
+    # High: Uses UUIDs but still no server-side auth check
+    uuid_map = {
+        "a1b2c3d4-0001": "101",
+        "e5f6a7b8-0002": "102",
+        "c9d0e1f2-0003": "103",
+        "a3b4c5d6-0004": "104",
+    }
+    order_uuid = request.args.get("order_uuid", "a1b2c3d4-0001")
+    order_id = uuid_map.get(order_uuid)
+    order = _BOLA_ORDERS.get(order_id) if order_id else None
+    flag_output = flag if order_uuid == "e5f6a7b8-0002" else None
+    return render_template(
+        "lab_bola_high.html",
+        order=order,
+        order_uuid=order_uuid,
+        flag_output=flag_output,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+@app.route("/labs/bola/impossible", methods=["GET"])
+@login_required
+def aaulab_bola_impossible():
+    # Impossible: Server strictly checks ownership — only own orders shown
+    my_orders = {oid: o for oid, o in _BOLA_ORDERS.items() if o["owner_id"] == "2"}
+    return render_template(
+        "lab_bola_impossible.html",
+        orders=my_orders,
+        flag_output=None,
+        username=session.get("username"),
+        role=session.get("role"),
+    )
+
+
+# ─────────────────────────────────────────────────────────────
+# Brute Force Impossible (Low/Medium/High already exist above)
+# ─────────────────────────────────────────────────────────────
+
+@app.route("/labs/bruteforce/impossible", methods=["GET", "POST"])
+@login_required
+def aaulab_bruteforce_impossible():
+    import time
+    error = None
+    flag_output = None
+    locked_until = session.get("bf_locked_until", 0)
+    attempts = session.get("bf_attempts", 0)
+
+    now = time.time()
+    if now < locked_until:
+        remaining = int(locked_until - now)
+        error = f"Account locked. Try again in {remaining} seconds."
+        return render_template(
+            "lab_bruteforce_impossible.html",
+            username=session.get("username"),
+            role=session.get("role"),
+            error=error,
+            flag_output=None,
+        )
+
+    if "Login" in request.args:
+        uname = request.args.get("username", "")
+        pwd   = request.args.get("password", "")
+        if uname == "ATE/5788/16" and pwd == "7854":
+            flag_output = "FLAG{bruteforce_impossible_captcha_lockout}"
+            session["bf_attempts"] = 0
+        else:
+            attempts += 1
+            session["bf_attempts"] = attempts
+            if attempts >= 3:
+                session["bf_locked_until"] = now + 60
+                session["bf_attempts"] = 0
+                error = "Too many failed attempts. Account locked for 60 seconds."
+            else:
+                error = f"Invalid credentials. ({attempts}/3 attempts)"
+
+    return render_template(
+        "lab_bruteforce_impossible.html",
+        username=session.get("username"),
+        role=session.get("role"),
+        error=error,
+        flag_output=flag_output,
+    )
+
+
 # ── API Routes ──────────────────────────────────────────────
+
 
 
 @app.route("/api/scan", methods=["POST"])
@@ -2053,5 +2000,69 @@ def api_threats():
     return jsonify(event)
 
 
+
+import os, uuid
+from werkzeug.utils import secure_filename
+
+@app.route("/labs/image_xss_low", methods=["GET", "POST"])
+@login_required
+def lab_image_xss_low():
+    upload_dir = os.path.join(app.root_path, 'static', 'uploads', 'svg')
+    os.makedirs(upload_dir, exist_ok=True)
+    
+    message = ""
+    color = "red"
+    if request.method == "POST" and "file" in request.files:
+        file = request.files["file"]
+        if file.filename:
+            ext = file.filename.rsplit('.', 1)[-1].lower()
+            if ext != 'svg':
+                message = "❌ Only SVG files are allowed."
+            else:
+                filename = f"file_{uuid.uuid4().hex}.svg"
+                target = os.path.join(upload_dir, filename)
+                file.save(target)
+                view_url = f"/static/uploads/svg/{filename}"
+                color = "green"
+                message = f"✅ File uploaded!<br><iframe src='{view_url}' style='width:100%; height:500px; border:none;'></iframe>"
+
+    return render_template("lab_image_xss_low.html",
+        message=message, msg_color=color,
+        username=session.get('username'), role=session.get('role'))
+
+@app.route("/labs/file_upload_low", methods=["GET", "POST"])
+@login_required
+def lab_file_upload_low():
+    upload_dir = os.path.join(app.root_path, 'static', 'uploads', 'hackable')
+    os.makedirs(upload_dir, exist_ok=True)
+    
+    message = ""
+    uploaded_url = None
+    if request.method == "POST" and "uploaded" in request.files:
+        file = request.files["uploaded"]
+        if file.filename:
+            filename = file.filename
+            target = os.path.join(upload_dir, filename)
+            try:
+                file.save(target)
+                uploaded_url = f"/static/uploads/hackable/{filename}"
+                message = f"{filename} successfully uploaded!"
+            except Exception as e:
+                message = f"Upload failed: {e}"
+
+    return render_template("lab_file_upload_low.html", message=message,
+        uploaded_url=uploaded_url,
+        username=session.get('username'), role=session.get('role'))
+
+@app.route("/labs/otp_bypass_low", methods=["GET", "POST"])
+@login_required
+def lab_otp_bypass_low():
+    # Regenerate OTP on each fresh GET visit
+    if request.method == "GET":
+        session["lab_otp"] = str(random.randint(1000, 9999))
+    otp = session.get("lab_otp", "0000")
+    return render_template("lab_otp_bypass_low.html", otp=otp,
+        username=session.get('username'), role=session.get('role'))
+
 if __name__ == "__main__":
-    socketio.run(app, debug=False, host="0.0.0.0", port=5000)
+    socketio.run(app, debug=False, host="0.0.0.0", port=5000, allow_unsafe_werkzeug=True)

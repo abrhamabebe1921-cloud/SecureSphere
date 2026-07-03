@@ -1,0 +1,68 @@
+{% extends "_lab_base.html" %}
+{% block title %}BOLA Lab (Medium){% endblock %}
+{% block content %}
+<div class="lab-header">
+    <div class="lab-icon">🛡️</div>
+    <div class="lab-title">
+        <h1>Broken Object-Level Authorization (BOLA)</h1>
+        <div class="lab-meta">
+            <span class="badge badge-med">Medium</span>
+            <span class="badge badge-vuln">BOLA / API</span>
+        </div>
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">🎯 Objective</div>
+    <div class="warn-box">
+        The server now checks your role to authorize access to other users' orders.
+        However, it reads your role from a user-controlled HTTP header: <code>X-User-Role</code>.
+        Since we cannot easily manipulate headers in this simple UI demo, we've provided a field to simulate setting that header for the request.
+        Bypass the check to view Order #102.
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">📦 Order Viewer — Weak Authorization Check</div>
+    <form method="GET" style="margin-bottom:20px; background:rgba(255,255,255,.03); padding:16px; border-radius:8px;">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Order ID</label>
+                <input type="text" name="order_id" value="{{ order_id }}" placeholder="e.g. 102">
+            </div>
+            <div class="form-group">
+                <label>Simulated Header: X-User-Role</label>
+                <!-- Using a regular GET parameter to mock the header for the demo -->
+                <input type="text" name="role_header" value="{{ request.args.get('role_header', 'user') }}" placeholder="user">
+            </div>
+        </div>
+        <button type="submit" class="btn">Fetch Order</button>
+        <div class="hint-block" style="border:none; padding:0; margin-top:0;">
+            <p>For this Medium lab, simulating header injection:</p>
+            <p style="color:var(--dim);">To complete this attack in a real environment, you would use Burp Suite to change the <code>X-User-Role</code> header to <code>admin</code>.</p>
+        </div>
+    </form>
+    
+    <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+        <a href="?order_id=101" class="btn" style="font-size:12px; background:linear-gradient(135deg,#004d29,#00ff88); color:#000;">Order #101 (Yours)</a>
+        <a href="?order_id=102" class="btn" style="font-size:12px; background:rgba(255,51,85,.15); border:1px solid rgba(255,51,85,.3); color:var(--red);">Order #102 (Admin)</a>
+    </div>
+
+    {% if order and (role_header == 'admin' or order.owner_id == '2') %}
+    <table class="results-table">
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr><td>Order ID</td><td style="font-family:'JetBrains Mono',monospace;">{{ order_id }}</td></tr>
+        <tr><td>Item</td><td style="color:var(--accent2);">{{ order.item }}</td></tr>
+        <tr><td>Total</td><td style="color:var(--orange);">{{ order.total }}</td></tr>
+        <tr><td>Status</td><td><span class="diff-badge diff-low">{{ order.status }}</span></td></tr>
+        <tr><td>Owner ID</td><td style="color:{% if order.owner_id == '1' %}var(--red){% else %}var(--dim){% endif %}; font-family:'JetBrains Mono',monospace;">{{ order.owner_id }}{% if order.owner_id == '1' %} ← ADMIN{% endif %}</td></tr>
+    </table>
+    {% elif order %}
+    <div class="error-msg">Access Denied: You do not own this order and are not an admin.</div>
+    {% else %}
+    <div class="error-msg">Order not found.</div>
+    {% endif %}
+
+    {% if flag_output %}
+    <div class="flag-output">🚩 FLAG: {{ flag_output }}</div>
+    {% endif %}
+</div>
+{% endblock %}

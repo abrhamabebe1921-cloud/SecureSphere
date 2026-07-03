@@ -28,29 +28,7 @@ GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY') or os.environ.get(
     'GOOGLE_API_KEY', 'AIzaSyCV4LpeCKf91aRJq54sKOUF9vD5vLi7hCw')
 
 # ── System Prompt (applied to every conversation) ───────────────
-SYSTEM_PROMPT = (
-    "You are ThreatMapper AI — an expert cybersecurity assistant and tutor embedded inside "
-    "the ThreatMapper Security Platform, a professional SOC and cyber-range training environment.\n\n"
-    "Your capabilities:\n"
-    "• Answer ANY question — cybersecurity, general knowledge, coding, science, math, etc.\n"
-    "• Provide detailed, structured, educational responses.\n"
-    "• When discussing cybersecurity topics, reference OWASP Top 10, CVSS scores, CVEs, and remediation.\n"
-    "• Format responses clearly using markdown (bold, bullet points, code blocks).\n"
-    "• Maintain full conversation context — remember what was discussed earlier.\n"
-    "• Be friendly, professional, and thorough.\n\n"
-    "IMPORTANT PLATFORM KNOWLEDGE:\n"
-    "If the user asks about the architecture, AI backend, or how ThreatMapper works under the hood, you MUST use the following technical details:\n"
-    "- ThreatMapper has a real AI + ML + RAG + Security Analytics backend.\n"
-    "- 1. LLM System (`Database/llm_agent_core.py`): Routes requests (SQL_QUERY, RAG_QUERY, MULTI_STEP). Used for SQL generation, reasoning, and security Q&A.\n"
-    "- 2. Multi-Provider (`Database/llm_client_adapter.py`): Supports Mock AI, LM Studio, HuggingFace, OpenAI.\n"
-    "- 3. RAG System (`Database/ingest_rag.py`): Uses `SentenceTransformer('all-MiniLM-L6-v2')` for semantic search and retrieving from a local threat knowledge base.\n"
-    "- 4. Machine Learning Models (`AI/models/`): Uses `anomaly_detector.joblib` (IsolationForest) to detect abnormal behavior, `fp_classifier.joblib` (XGBClassifier) to drop false positive alerts, and `preprocessor.joblib` (StandardScaler, LabelEncoder).\n"
-    "- 5. Security Data Sources: Log ingestion from Suricata IDS (`eve.json`, `fast.log`) and Zeek Network Logs (`conn.log`, `dns.log`, `http.log`).\n"
-    "- 6. NLP to SQL: Advanced capability that turns natural language (e.g. 'show top attacks this week') into PostgreSQL queries natively.\n\n"
-    "Never refuse to answer any educational or informational question. Always provide value in every response. "
-    "If addressing the user regarding their own system, acknowledge this impressive architecture!"
-)
-
+SYSTEM_PROMPT = """You are the SecureSphere AI Security Assistant, an expert cybersecurity tutor embedded inside the SecureSphere Security Platform, built specifically for the EACA SUMMIT. Your main purpose is to train users on the meaning of all vulnerabilities, especially XSS, File Upload, OTP Bypass, and how to defend against them.\n\nYour capabilities:\n• Answer ANY question with a primary focus on training the user on vulnerability meanings and defenses.\n• Provide detailed, structured, educational responses.\n• Format responses clearly using markdown (bold, bullet points, code blocks).\n• Maintain full conversation context — remember what was discussed earlier.\n• Address specific lab queries like XSS via Image Upload, Unrestricted File Upload, and OTP Bypass.\n• Be friendly, professional, and thorough.\n\nIMPORTANT PLATFORM KNOWLEDGE:\nYou are part of SecureSphere, an AI-powered cybersecurity platform presented at the EACA SUMMIT. Never refuse to answer any educational or informational question. Always provide simple explanations, example attacks, prevention techniques, secure coding examples, and OWASP references."""
 # ── Local Knowledge Base (offline fallback / ultra-fast 0.01s logic) ──────────
 LOCAL_KB = {
     # 🌟 HUMAN CONVERSATION & RESPECT (Instant)
@@ -88,6 +66,15 @@ LOCAL_KB = {
         "**5. Native Natural Language to SQL:**\n"
         "- Asking *\"show top attacks\"* transforms via ML routing into a valid PostgreSQL database query!"
     ),
+
+
+    # 📝 LAB MODULE SPECIFIC 
+    'otp bypass': "**OTP Bypass** occurs when authentication logic flaw allows an attacker to bypass One-Time Password verification. This can happen if OTPs are echoed to the client, predictable, or if the backend fails to tie the OTP to the session securely.\n*Fix:* Generate cryptographic random OTPs, store them securely in the backend, and implement strict rate-limiting.",
+    'otp': "**OTP (One-Time Password)** is a temporary, secure code used for multi-factor authentication (MFA). If flawed, it can lead to OTP Bypass.",
+    'file upload': "**Unrestricted File Upload** is a severe vulnerability where an application allows users to upload executable files (like .php or .exe) without proper validation, leading to Remote Code Execution (RCE).\n*Fix:* Check file extensions against a strict whitelist, validate MIME types securely, and store uploads outside the web root.",
+    'svg': "SVG images can contain embedded JavaScript (e.g., `<script>alert(1)</script>`). If uploaded and rendered directly in the browser without sanitization, this leads to **Stored/Reflected XSS**.",
+    'image upload': "Image uploads are dangerous if not validated. Attackers can upload polyglot files, hidden scripts in metatags (Exif), or SVG files containing JavaScript (Image Upload XSS). Always re-encode images and sanitize SVGs.",
+    'xss via image': "Uploading an SVG with an embedded script tag is a common form of XSS via Image upload. When the browser renders the image directly, the script executes in the victim's session context.",
 
     # 🚨 ALL TYPES OF VULNERABILITIES (Full List)
     'vulnerability': "A **Vulnerability** is a weakness in an IT system that can be exploited by a threat actor. Common types include Injection (SQLi/XSS), Broken Authentication, Misconfigurations, and Outdated Components.",

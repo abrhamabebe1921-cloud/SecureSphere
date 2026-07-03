@@ -1,0 +1,50 @@
+{% extends "_lab_base.html" %}
+{% block title %}BOLA Lab (Impossible){% endblock %}
+{% block content %}
+<div class="lab-header">
+    <div class="lab-icon">🛡️</div>
+    <div class="lab-title">
+        <h1>Broken Object-Level Authorization (BOLA)</h1>
+        <div class="lab-meta">
+            <span class="badge badge-impossible">Impossible</span>
+            <span class="badge badge-vuln">BOLA / API</span>
+        </div>
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">🛡️ Secure Authorization</div>
+    <div class="secure-box">
+        The application strictly implements Object-Level Authorization. The API no longer accepts an <code>order_id</code> parameter to view an order.
+        Instead, it fetches <em>only</em> the orders associated with your authenticated session ID.
+        It is mathematically and logically impossible to access another user's order.
+    </div>
+    <div class="query-box" style="color:#aaa; font-size:12px;">
+# SECURE implementation:<br>
+user_id = session.get("user_id")<br>
+# Database enforces the authorization boundary<br>
+orders = db.query("SELECT * FROM orders WHERE owner_id = ?", (user_id,))
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">📦 Your Orders</div>
+    {% if orders %}
+    <table class="results-table">
+        <tr><th>Order ID</th><th>Item</th><th>Total</th><th>Status</th></tr>
+        {% for oid, order in orders.items() %}
+        <tr>
+            <td style="font-family:'JetBrains Mono',monospace;">{{ oid }}</td>
+            <td style="color:var(--accent2);">{{ order.item }}</td>
+            <td style="color:var(--orange);">{{ order.total }}</td>
+            <td><span class="diff-badge diff-low">{{ order.status }}</span></td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <div class="error-msg">You have no orders.</div>
+    {% endif %}
+    
+    <div style="margin-top:20px; padding:16px; background:rgba(168,85,247,.06); border:1px solid rgba(168,85,247,.2); border-radius:8px; font-size:12px; color:#a855f7;">
+        ✅ No flag at this level. The authorization boundary is perfectly sealed, mitigating all BOLA attacks.
+    </div>
+</div>
+{% endblock %}

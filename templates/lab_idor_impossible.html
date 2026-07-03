@@ -1,0 +1,41 @@
+{% extends "_lab_base.html" %}
+{% block title %}IDOR Lab (Impossible){% endblock %}
+{% block content %}
+<div class="lab-header">
+    <div class="lab-icon">🆔</div>
+    <div class="lab-title">
+        <h1>Insecure Direct Object Reference (IDOR)</h1>
+        <div class="lab-meta">
+            <span class="badge badge-impossible">Impossible</span>
+            <span class="badge badge-vuln">IDOR</span>
+        </div>
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">🛡️ Server-Side Authorization</div>
+    <div class="secure-box">
+        No user ID parameter is accepted. The server uses the <strong>authenticated session</strong> to determine who you are,
+        and only returns data belonging to you. There is no way to reference another user's object.
+    </div>
+    <div class="query-box" style="color:#aaa; font-size:12px;">
+# SECURE implementation:<br>
+user_id = session["user_id"]  # From server-side session, not URL<br>
+profile = db.query("SELECT * FROM users WHERE id = ?", (user_id,))
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">👤 Your Profile (read-only, session-bound)</div>
+    {% if profile %}
+    <table class="results-table">
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr><td>Name</td><td style="color:var(--accent2);">{{ profile.name }}</td></tr>
+        <tr><td>Email</td><td>{{ profile.email }}</td></tr>
+        <tr><td>Role</td><td><span class="diff-badge diff-low">{{ profile.role }}</span></td></tr>
+        <tr><td>Bank</td><td style="color:var(--dim); font-family:'JetBrains Mono',monospace;">{{ profile.bank[:4] }}****</td></tr>
+    </table>
+    {% endif %}
+    <div style="margin-top:20px; padding:16px; background:rgba(168,85,247,.06); border:1px solid rgba(168,85,247,.2); border-radius:8px; font-size:12px; color:#a855f7;">
+        ✅ No flag at this level. Server-side session binding prevents all IDOR attacks.
+    </div>
+</div>
+{% endblock %}

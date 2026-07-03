@@ -1,0 +1,59 @@
+{% extends "_lab_base.html" %}
+{% block title %}SQL Injection Lab (Impossible){% endblock %}
+{% block content %}
+<div class="lab-header">
+    <div class="lab-icon">🗄️</div>
+    <div class="lab-title">
+        <h1>SQL Injection</h1>
+        <div class="lab-meta">
+            <span class="badge badge-impossible">Impossible</span>
+            <span class="badge badge-vuln">SQLi</span>
+        </div>
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">🛡️ Parameterized Queries</div>
+    <div class="secure-box">
+        This level uses <strong>parameterized queries</strong> (prepared statements). User input is never concatenated into SQL strings.
+        The database driver treats it as pure data, not executable code — injection is impossible.
+    </div>
+    <div class="query-box" style="color:#aaa; font-size:12px;">
+# SECURE implementation:<br>
+cursor.execute("SELECT * FROM users WHERE username = ?", (username,))<br>
+# The ? placeholder is never parsed as SQL
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">🔒 Secure User Lookup</div>
+    {% if query_display %}
+    <div class="query-box" style="color:#a855f7;">{{ query_display }}</div>
+    {% endif %}
+    <form method="POST">
+        <div class="form-group">
+            <label>Username (exact match only)</label>
+            <input type="text" name="username" placeholder="e.g. alice" value="{{ request.form.get('username','') }}">
+        </div>
+        <button type="submit" class="btn" style="background:linear-gradient(135deg,#5b21b6,#a855f7);">Secure Search</button>
+    </form>
+    {% if results %}
+    <div style="margin-top:20px;">
+        <div class="panel-title">Results</div>
+        <table class="results-table">
+            <tr><th>ID</th><th>Username</th><th>Role</th></tr>
+            {% for u in results %}
+            <tr>
+                <td>{{ u.id }}</td>
+                <td style="color:var(--accent2);">{{ u.username }}</td>
+                <td>{{ u.role }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% elif query_display %}
+    <div style="margin-top:16px; color:var(--dim); font-size:13px;">No exact match found. Injection payloads return nothing.</div>
+    {% endif %}
+    <div style="margin-top:20px; padding:16px; background:rgba(168,85,247,.06); border:1px solid rgba(168,85,247,.2); border-radius:8px; font-size:12px; color:#a855f7;">
+        ✅ No flag at this level. This demonstrates the secure pattern that prevents all SQL injection.
+    </div>
+</div>
+{% endblock %}

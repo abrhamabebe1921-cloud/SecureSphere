@@ -1,5 +1,5 @@
 """
-ThreatMapper – Modular Vulnerability Scanner (Educational / Lab Use Only)
+SecureSphere – Modular Vulnerability Scanner (Educational / Lab Use Only)
 =========================================================================
 Modules:
   1. Passive Recon          – subdomain expansion from wildcard
@@ -85,7 +85,7 @@ def get_severity(cvss: float) -> str:
 # HTTP helpers
 # ─────────────────────────────────────────────────────────────────────
 HEADERS = {
-    'User-Agent': 'ThreatMapper-Scanner/2.0 (Educational Lab)',
+    'User-Agent': 'SecureSphere-Scanner/2.0 (Educational Lab)',
     'Accept': 'text/html,application/xhtml+xml,application/json,*/*',
 }
 TIMEOUT = 6   # seconds per request
@@ -429,10 +429,10 @@ def run_simulation(target: str,
                    speed: float = 10,
                    risk_level: str = 'Medium') -> dict:
     """
-    Run the ThreatMapper scanner.
+    Run the SecureSphere scanner.
 
     Args:
-        target      – domain/IP or wildcard like *.aau.edu.et
+        target      – domain/IP or wildcard like *.eacasummit.com
         subdomains  – explicit list from .txt upload (overrides wildcard expansion)
         source_code - paste from SAST form
         callback    – function(str) for live log streaming
@@ -455,7 +455,7 @@ def run_simulation(target: str,
 
     # ── Banner ──────────────────────────────────────────────
     emit('=' * 60)
-    emit(' ThreatMapper Vulnerability Scanner v2.0')
+    emit(' SecureSphere Vulnerability Scanner v2.0')
     emit(' Educational / Lab Use Only')
     emit('=' * 60)
     emit(f'[INIT] Target     : {target}')

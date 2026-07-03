@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════
-// ThreatMapper v2.0 — Main Application JavaScript
+// SecureSphere v2.0 — Main Application JavaScript
 // ═══════════════════════════════════════════════════════════
 
 const socket = io();
@@ -52,7 +52,7 @@ function toggleScanPanel() {
 }
 
 /* Active scan tab: 'domain', 'file', or 'source' */
-let activeScanTab = 'domain';
+let activeScanTab = 'file';
 
 function setScanTab(mode) {
     activeScanTab = mode;
@@ -115,7 +115,7 @@ function startScan() {
     if (activeScanTab === 'domain') {
         target = (document.getElementById('scanTarget').value || '').trim();
         if (!target) {
-            showToast('Enter a domain or wildcard (e.g. *.aau.edu.et)', 'error');
+            showToast('Enter a domain or wildcard (e.g. *.example.com)', 'error');
             return;
         }
     } else if (activeScanTab === 'file') {
@@ -300,7 +300,7 @@ async function exportPDF() {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'ThreatMapper_Report.pdf';
+            a.download = 'SecureSphere_Report.pdf';
             a.click();
             URL.revokeObjectURL(url);
             showToast('PDF report downloaded!', 'success');

@@ -1,0 +1,44 @@
+{% extends "_lab_base.html" %}
+{% block title %}SSTI Lab (Impossible){% endblock %}
+{% block content %}
+<div class="lab-header">
+    <div class="lab-icon">🧪</div>
+    <div class="lab-title">
+        <h1>Server-Side Template Injection (SSTI)</h1>
+        <div class="lab-meta">
+            <span class="badge badge-impossible">Impossible</span>
+            <span class="badge badge-vuln">SSTI</span>
+        </div>
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">🛡️ Secure Implementation</div>
+    <div class="secure-box">
+        All user input is now passed through <code>html.escape()</code> before being used anywhere near the template engine.
+        The application never calls <code>render_template_string()</code> with user data.
+        No injection is possible at this level.
+    </div>
+    <div class="query-box" style="color:#aaa; font-size:12px; margin-bottom:16px;">
+# SECURE backend:<br>
+import html<br>
+safe_input = html.escape(request.form['template'])<br>
+return render_template('static_template.html', name=safe_input)
+    </div>
+    <form method="POST">
+        <div class="form-group">
+            <label>Template Input (safely escaped)</label>
+            <input type="text" name="template" placeholder="Try any payload..." value="{{ request.form.get('template','') }}">
+        </div>
+        <button type="submit" class="btn">Render (Safe)</button>
+    </form>
+    {% if result %}
+    <div style="margin-top:20px;">
+        <div class="panel-title">Output (HTML-escaped — safe)</div>
+        <div class="query-box" style="color:#888;">{{ result }}</div>
+    </div>
+    {% endif %}
+    <div style="margin-top:20px; padding:16px; background:rgba(168,85,247,.06); border:1px solid rgba(168,85,247,.2); border-radius:8px; font-size:12px; color:#a855f7; font-family:'JetBrains Mono',monospace;">
+        ✅ No flag here. This level demonstrates the secure pattern. SSTI is fully mitigated.
+    </div>
+</div>
+{% endblock %}

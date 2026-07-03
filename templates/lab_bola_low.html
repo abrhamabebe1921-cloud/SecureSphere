@@ -1,0 +1,48 @@
+{% extends "_lab_base.html" %}
+{% block title %}BOLA Lab (Low){% endblock %}
+{% block content %}
+<div class="lab-header">
+    <div class="lab-icon">🛡️</div>
+    <div class="lab-title">
+        <h1>Broken Object-Level Authorization (BOLA)</h1>
+        <div class="lab-meta">
+            <span class="badge badge-low">Low</span>
+            <span class="badge badge-vuln">BOLA / API</span>
+        </div>
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">🎯 Objective</div>
+    <div class="info-box">
+        The API endpoint <code>GET /orders?order_id=</code> returns order data with no ownership check.
+        You are customer ID 2. Find and access Order #102 which belongs to Admin (customer ID 1) to capture the flag.
+    </div>
+    <div class="hint-block">
+        💡 Try: <code>?order_id=102</code> — the server returns it without verifying you own it.
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">📦 Order Viewer — No Authorization Check</div>
+    <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+        <a href="?order_id=101" class="btn" style="font-size:12px; background:linear-gradient(135deg,#004d29,#00ff88); color:#000;">Order #101 (Yours)</a>
+        <a href="?order_id=102" class="btn" style="font-size:12px; {% if order_id == '102' %}background:linear-gradient(135deg,#660011,#ff3355){% else %}background:rgba(255,51,85,.15); border:1px solid rgba(255,51,85,.3); color:var(--red){% endif %};">Order #102 (Admin)</a>
+        <a href="?order_id=103" class="btn" style="font-size:12px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);">Order #103</a>
+        <a href="?order_id=104" class="btn" style="font-size:12px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);">Order #104</a>
+    </div>
+    {% if order %}
+    <table class="results-table">
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr><td>Order ID</td><td style="font-family:'JetBrains Mono',monospace;">{{ order_id }}</td></tr>
+        <tr><td>Item</td><td style="color:var(--accent2);">{{ order.item }}</td></tr>
+        <tr><td>Total</td><td style="color:var(--orange);">{{ order.total }}</td></tr>
+        <tr><td>Status</td><td><span class="diff-badge diff-low">{{ order.status }}</span></td></tr>
+        <tr><td>Owner ID</td><td style="color:{% if order.owner_id == '1' %}var(--red){% else %}var(--dim){% endif %}; font-family:'JetBrains Mono',monospace;">{{ order.owner_id }}{% if order.owner_id == '1' %} ← ADMIN{% endif %}</td></tr>
+    </table>
+    {% else %}
+    <div class="error-msg">Order not found.</div>
+    {% endif %}
+    {% if flag_output %}
+    <div class="flag-output">🚩 FLAG: {{ flag_output }}</div>
+    {% endif %}
+</div>
+{% endblock %}

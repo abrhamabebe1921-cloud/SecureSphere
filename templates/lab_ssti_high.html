@@ -1,0 +1,44 @@
+{% extends "_lab_base.html" %}
+{% block title %}SSTI Lab (High){% endblock %}
+{% block content %}
+<div class="lab-header">
+    <div class="lab-icon">🧪</div>
+    <div class="lab-title">
+        <h1>Server-Side Template Injection (SSTI)</h1>
+        <div class="lab-meta">
+            <span class="badge badge-high">High</span>
+            <span class="badge badge-vuln">SSTI</span>
+        </div>
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">🎯 Objective</div>
+    <div class="info-box" style="border-left-color:var(--red);">
+        The server now uses a regex to strip <code>{{ ... }}</code> patterns entirely before rendering.
+        Find a way to sneak in a template expression that survives the regex filter.
+    </div>
+    <div class="hint-block">
+        💡 Hint: The regex is <code>re.sub(r'\{{.*?\}}', '[FILTERED]', input)</code> — non-greedy.<br>
+        Try nested or split braces: <code>{{'{{'}}{{'{{'}} 7+7 {{'}}'}}{{'}}'}}</code> or using unicode lookalikes.
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">⚡ High — Regex Filter Active</div>
+    <form method="POST">
+        <div class="form-group">
+            <label>Template Input</label>
+            <input type="text" name="template" placeholder="Try to bypass the regex filter..." value="{{ request.form.get('template','') }}">
+        </div>
+        <button type="submit" class="btn">Render Template</button>
+    </form>
+    {% if result %}
+    <div style="margin-top:20px;">
+        <div class="panel-title">Output</div>
+        <div class="query-box" style="color:#00ffcc;">{{ result }}</div>
+    </div>
+    {% endif %}
+    {% if flag_output %}
+    <div class="flag-output">🚩 FLAG: {{ flag_output }}</div>
+    {% endif %}
+</div>
+{% endblock %}

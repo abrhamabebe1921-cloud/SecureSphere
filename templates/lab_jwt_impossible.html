@@ -1,0 +1,55 @@
+{% extends "_lab_base.html" %}
+{% block title %}JWT Attack Lab (Impossible){% endblock %}
+{% block content %}
+<div class="lab-header">
+    <div class="lab-icon">🔑</div>
+    <div class="lab-title">
+        <h1>JWT Attack</h1>
+        <div class="lab-meta">
+            <span class="badge badge-impossible">Impossible</span>
+            <span class="badge badge-vuln">JWT</span>
+        </div>
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">🛡️ Secure JWT Implementation</div>
+    <div class="secure-box">
+        At this level, the server enforces all of the following:
+        <ul style="margin-top:10px; padding-left:18px; line-height:2;">
+            <li>Algorithm is <strong>hardcoded to RS256</strong> — the <code>alg</code> claim in the token header is completely ignored</li>
+            <li>Tokens are verified with a <strong>public key pinned server-side</strong></li>
+            <li>The <code>kid</code> header is validated against a whitelist — no path traversal possible</li>
+            <li>Tokens have a short expiry (<strong>15 minutes</strong>)</li>
+            <li>Signature is verified <strong>before</strong> any claims are read</li>
+        </ul>
+    </div>
+    <div class="query-box" style="color:#aaa; font-size:12px; margin-top:16px;">
+# SECURE implementation:<br>
+jwt.decode(token, PUBLIC_KEY, algorithms=["RS256"], options={"require": ["exp", "iat"]})
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">📋 Secure Token Validation Rules</div>
+    <table class="results-table">
+        <tr><th>Control</th><th>Status</th></tr>
+        <tr><td>Algorithm whitelist (RS256 only)</td><td style="color:var(--green);">✅ Enforced</td></tr>
+        <tr><td>Server-side public key pinned</td><td style="color:var(--green);">✅ Yes</td></tr>
+        <tr><td>kid header whitelist</td><td style="color:var(--green);">✅ Validated</td></tr>
+        <tr><td>Token expiry (15 min)</td><td style="color:var(--green);">✅ Enforced</td></tr>
+        <tr><td>Signature verified before claims read</td><td style="color:var(--green);">✅ Yes</td></tr>
+        <tr><td>alg:none accepted</td><td style="color:var(--red);">❌ Blocked</td></tr>
+        <tr><td>RS/HS confusion attack possible</td><td style="color:var(--red);">❌ Blocked</td></tr>
+    </table>
+    <div style="margin-top:20px; padding:16px; background:rgba(168,85,247,.06); border:1px solid rgba(168,85,247,.2); border-radius:8px; font-size:12px; color:#a855f7;">
+        ✅ No flag here. This level demonstrates the fully secure JWT implementation. Study the existing Low/Medium/High levels for exploitable weaknesses.
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">🔗 Other JWT Levels</div>
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <a href="/labs/jwt/low" class="btn" style="background:linear-gradient(135deg,#004d29,#00ff88); color:#000; font-size:12px;">LOW — none alg</a>
+        <a href="/labs/jwt/medium" class="btn" style="background:linear-gradient(135deg,#664400,#ff8c00); font-size:12px;">MEDIUM — HS/RS confusion</a>
+        <a href="/labs/jwt/high" class="btn" style="background:linear-gradient(135deg,#660011,#ff3355); font-size:12px;">HIGH — kid injection</a>
+    </div>
+</div>
+{% endblock %}

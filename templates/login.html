@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ThreatMapper — AAiT Cyber Security Lab · Secure Login">
+  <meta name="description" content="SecureSphere — EACA SUMMIT 2026 HACKATHON Cyber Security Lab · Secure Login">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
     href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap"
     rel="stylesheet">
-  <title>Login — ThreatMapper · AAiT</title>
+  <title>Login — SecureSphere · EACA SUMMIT 2026 HACKATHON</title>
 
   <style>
     *,
@@ -33,7 +33,7 @@
     .boot-overlay {
       position: fixed;
       inset: 0;
-      background: #000;
+      background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px);
       z-index: 200;
       display: flex;
       flex-direction: column;
@@ -48,18 +48,18 @@
       pointer-events: none;
     }
 
-    .boot-logo-wrap {
+    .boot-logo-wrap { flex-direction: column;
       display: flex;
       align-items: center;
       gap: 18px;
       margin-bottom: 6px;
     }
 
-    .boot-aau-img {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      object-fit: cover;
+    .boot-logo-img {
+      width: 200px;
+      height: 200px;
+      border-radius: 12px;
+      object-fit: contain;
       border: 2px solid rgba(0, 255, 136, 0.4);
       box-shadow: 0 0 18px rgba(0, 255, 136, 0.5);
       animation: bootImgPulse 2s ease-in-out infinite;
@@ -78,12 +78,12 @@
     }
 
     .boot-title-wrap {
-      text-align: left;
+      text-align: center;
     }
 
     .boot-title {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 20px;
+      font-size: 32px;
       font-weight: 700;
       letter-spacing: 0.22em;
       color: #00ff88;
@@ -92,15 +92,15 @@
 
     .boot-subtitle {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 16px;
       color: rgba(0, 255, 136, 0.4);
       letter-spacing: 0.12em;
       margin-top: 3px;
     }
 
     .boot-bar-wrap {
-      width: 260px;
-      height: 2px;
+      width: 340px;
+      height: 8px;
       background: rgba(0, 255, 136, 0.1);
       border-radius: 1px;
       overflow: hidden;
@@ -116,8 +116,9 @@
     }
 
     .boot-text {
+      font-size: 16px; letter-spacing: 0.1em;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: 16px;
       color: rgba(0, 255, 136, 0.55);
       letter-spacing: 0.06em;
       min-height: 16px;
@@ -146,7 +147,7 @@
     }
 
     .bg-slide.bg1 {
-      background-image: url("/static/aau_campus.jpg");
+      background-image: url("https://t3.ftcdn.net/jpg/02/98/58/52/360_F_298585211_O305HcvoHXjgpgocSeIuHppD4bCZi5Iw.jpg");
       opacity: 1;
     }
 
@@ -258,7 +259,7 @@
       gap: 12px;
     }
 
-    /* AAiT building photo as brand icon */
+    /* EACA SUMMIT 2026 HACKATHON building photo as brand icon */
     .top-aait-img {
       width: 44px;
       height: 44px;
@@ -553,16 +554,16 @@
       animation: shieldPulse 3s ease-in-out infinite;
     }
 
-    /* Medium AAU Official Logo inserted inside the shield */
-    .aau-medium-logo {
+    /* Medium EACA Official Logo inserted inside the shield */
+    .medium-logo {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 48px;
+      width: 120px;
       height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
+      border-radius: 12px;
+      object-fit: contain;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
       background: #fff;
     }
@@ -643,7 +644,7 @@
     .login-group label {
       display: block;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 14px;
       color: rgba(0, 255, 136, 0.55);
       text-transform: uppercase;
       letter-spacing: 0.1em;
@@ -672,7 +673,7 @@
       border-radius: 10px;
       color: #e0e0e0;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
+      font-size: 16px;
       outline: none;
       transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
     }
@@ -697,7 +698,7 @@
       border-radius: 10px;
       color: #000;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
+      font-size: 16px;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -819,7 +820,7 @@
       background: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
     }
 
-    /* AAiT small logo in bottom left */
+    /* EACA SUMMIT 2026 HACKATHON small logo in bottom left */
     .bottom-brand {
       display: flex;
       align-items: center;
@@ -1162,11 +1163,10 @@
   <!-- ══ BOOT SEQUENCE ══════════════════════════════════ -->
   <div class="boot-overlay" id="bootOverlay">
     <div class="boot-logo-wrap">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSa3UQA99hhU9XkynASmyhZBn5StjS9fEabEg&s"
-        class="boot-aau-img" alt="AAU Seal">
+      <img src="https://www.eacasummit.com/_next/image?url=%2Fsummit-logo.webp&w=3840&q=95" class="boot-logo-img" alt="EACA Seal">
       <div class="boot-title-wrap">
-        <div class="boot-title">THREATMAPPER</div>
-        <div class="boot-subtitle">AAiT · Cyber Security Lab · v2.0</div>
+        <!-- <div class="boot-title">SECURESPHERE</div> -->
+        <!-- <div class="boot-subtitle">EACA SUMMIT 2026 HACKATHON · Cyber Security Lab · v2.0</div> -->
       </div>
     </div>
     <div class="boot-bar-wrap">
@@ -1178,9 +1178,10 @@
   <!-- ══ LANDING ════════════════════════════════════════ -->
   <div class="landing" id="landing">
     <!-- Main Background -->
-    <div class="bg-slide show" id="bgSlide1"
-      style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/2/2a/Parco_dell%27universit%C3%A0_di_addis_abeba%2C_09.jpg'); background-size: 100% 100%; background-repeat: no-repeat;">
-    </div>
+    
+    <!-- Cyber Background -->
+    <div id="cyberBackground" class="bg-slide show bg1" style="position: absolute; inset: 0; z-index: 0;"></div>
+
 
     <!-- Darkening overlay -->
     <div class="overlay"></div>
@@ -1192,10 +1193,10 @@
     <!-- TOP BAR -->
     <div class="top-bar">
       <div class="top-brand">
-        <img src="/static/aait_logo.jpg" class="top-aait-img" alt="AAiT Building">
+        <img src="https://www.eacasummit.com/_next/image?url=%2Fsummit-logo.webp&w=3840&q=95" class="top-aait-img" alt="EACA SUMMIT 2026 HACKATHON Building">
         <div class="top-brand-text">
-          <h2>THREATMAPPER</h2>
-          <div class="top-sub">Addis Ababa Institute of Technology · Security Lab</div>
+          <h2>SECURESPHERE</h2>
+          <div class="top-sub">EACA SUMMIT 2026 HACKATHON · Security Lab</div>
         </div>
       </div>
       <div class="top-right">
@@ -1222,12 +1223,11 @@
       <div class="login-logo">
         <div class="composite-logo-wrapper">
           <span class="tm-large-logo">🛡️</span>
-          <!-- URL3 is the AAU official red/gold crest image -->
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSa3UQA99hhU9XkynASmyhZBn5StjS9fEabEg&s"
-            class="aau-medium-logo" alt="AAU Official Logo">
+          <!-- URL3 is the EACA official red/gold crest image -->
+          <img src="https://www.eacasummit.com/_next/image?url=%2Fsummit-logo.webp&w=3840&q=95" class="medium-logo" alt="EACA Official Logo">
         </div>
-        <h1>THREATMAPPER</h1>
-        <div class="sub-line">Addis Ababa University · Institute of Technology</div>
+        <h1>SECURESPHERE</h1>
+        <div class="sub-line">EACA SUMMIT 2026 HACKATHON · Institute of Technology</div>
         <div class="sub-line" style="color:rgba(255,106,0,0.5); margin-top:2px;">Cyber Security Education Platform
         </div>
       </div>
@@ -1244,7 +1244,7 @@
           <label>Email Address</label>
           <div class="input-wrap">
             <span class="input-icon">✉</span>
-            <input type="email" name="email" id="emailInput" placeholder="user@aau.edu.et" required
+            <input type="email" name="email" id="emailInput" placeholder="user@eacasummit.com" required
               autocomplete="username">
           </div>
         </div>
@@ -1271,8 +1271,8 @@
     <!-- BOTTOM BAR -->
     <div class="bottom-bar">
       <div class="bottom-brand">
-        <img src="/static/aait_logo.jpg" class="bottom-aait-img" alt="AAiT">
-        <div class="bottom-text">Addis Ababa Institute of Technology — Information Security Lab</div>
+        <img src="https://www.eacasummit.com/_next/image?url=%2Fsummit-logo.webp&w=3840&q=95" class="bottom-aait-img" alt="EACA SUMMIT 2026 HACKATHON">
+        <div class="bottom-text">EACA SUMMIT 2026 HACKATHON — Information Security Lab</div>
       </div>
       <div class="bottom-right" id="datePill"></div>
     </div>
@@ -1324,36 +1324,36 @@
     /* ════════════════════════════════════════════════
        BOOT SEQUENCE
     ════════════════════════════════════════════════ */
-    const bootLines = [
-      'Verifying hardware security module.........',
-      'Loading cryptographic libraries.........',
-      'Connecting to ThreatMapper core.......',
-      'Authenticating certificate chain......',
-      'Scanning network perimeter.....',
-      'System ready. Secure gateway active.',
-    ];
-    let bootStep = 0;
+    let progress = 0;
     const bootBar = document.getElementById('bootBar');
     const bootText = document.getElementById('bootText');
     const bootOverlay = document.getElementById('bootOverlay');
 
     function runBoot() {
-      if (bootStep >= bootLines.length) {
+      if (progress >= 100) {
+        bootText.textContent = "Loading... 100%";
+        if(bootBar) bootBar.style.width = '100%';
         setTimeout(() => {
-          bootOverlay.classList.add('fade-out');
-          setTimeout(() => bootOverlay.remove(), 1000);
+          if(bootOverlay) bootOverlay.classList.add('fade-out');
+          setTimeout(() => { if(bootOverlay) bootOverlay.remove(); }, 1000);
         }, 320);
         return;
       }
-      bootText.textContent = bootLines[bootStep];
-      bootBar.style.width = ((bootStep + 1) / bootLines.length * 100) + '%';
-      bootStep++;
-      setTimeout(runBoot, 350 + Math.random() * 180);
+      
+      if(bootText) bootText.textContent = `Loading... ${progress}%`;
+      if(bootBar) bootBar.style.width = `${progress}%`;
+      
+      progress += Math.floor(Math.random() * 15) + 5;
+      if (progress > 100) progress = 100;
+      
+      setTimeout(runBoot, 200 + Math.random() * 300);
     }
-    setTimeout(runBoot, 300);
-
-
-
+    
+    // Safety check just in case bootOverlay is missing
+    if(bootOverlay) {
+        setTimeout(runBoot, 300);
+    }
+    
     /* ════════════════════════════════════════════════
        GATE TOGGLE → triggers email verification first
     ════════════════════════════════════════════════ */
@@ -1709,6 +1709,7 @@
     });
     {% endif %}
   </script>
+
 
 </body>
 

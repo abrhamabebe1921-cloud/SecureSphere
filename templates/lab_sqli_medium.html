@@ -1,320 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SQLi Lab (Medium) — ThreatMapper</title>
-  <style>
-    body {
-      background-color: #050510;
-      color: #fff;
-      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      position: relative;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url('https://upload.wikimedia.org/wikipedia/commons/2/2a/Parco_dell%27universit%C3%A0_di_addis_abeba%2C_09.jpg');
-      background-size: cover;
-      background-position: center;
-      filter: blur(16px) brightness(0.4) saturate(1.8);
-      z-index: -2;
-      transform: scale(1.05);
-    }
-
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.95)), linear-gradient(135deg, rgba(255, 106, 0, 0.1) 0%, rgba(0, 255, 136, 0.1) 100%);
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    nav {
-      width: 100%;
-      height: 60px;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      display: flex;
-      align-items: center;
-      padding: 0 30px;
-      box-sizing: border-box;
-      gap: 20px;
-    }
-
-    nav a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 14px;
-      transition: color 0.3s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    nav a:hover {
-      color: #ffaa00;
-    }
-
-    .brand {
-      font-size: 18px;
-      font-weight: 700;
-      background: linear-gradient(90deg, #ff6a00, #ffaa00);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-right: auto;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 800px;
-      margin-top: 60px;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    .panel {
-      background: rgba(10, 10, 15, 0.7);
-      backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-      position: relative;
-    }
-
-    .panel-bg-glow {
-      position: absolute;
-      top: -20px;
-      left: -20px;
-      right: -20px;
-      bottom: -20px;
-      background: radial-gradient(circle at 50% top, rgba(255, 106, 0, 0.15), transparent 70%);
-      z-index: -1;
-      border-radius: 12px;
-    }
-
-    .title {
-      font-size: 24px;
-      font-weight: 700;
-      color: #ffaa00;
-      margin-top: 0;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .title span {
-      font-size: 12px;
-      padding: 4px 8px;
-      background: rgba(255, 50, 50, 0.2);
-      border: 1px solid rgba(255, 50, 50, 0.5);
-      border-radius: 4px;
-      color: #ff3333;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .source-block {
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 8px;
-      padding: 15px;
-      font-family: monospace;
-      color: #aaa;
-      font-size: 12px;
-      margin-bottom: 30px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 25px;
-    }
-
-    .form-group label {
-      font-size: 14px;
-      font-weight: 600;
-      color: #ccc;
-    }
-
-    .form-group input {
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #00ffcc;
-      font-family: monospace;
-      padding: 14px;
-      border-radius: 6px;
-      font-size: 16px;
-      transition: all 0.3s;
-      outline: none;
-    }
-
-    .form-group input:focus {
-      border-color: #ffaa00;
-      box-shadow: 0 0 15px rgba(255, 170, 0, 0.2);
-    }
-
-    button {
-      background: linear-gradient(135deg, #ff6a00 0%, #ffaa00 100%);
-      color: #111;
-      font-weight: bold;
-      border: none;
-      padding: 14px 24px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 15px;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 20px rgba(255, 170, 0, 0.4);
-    }
-
-    .output-area {
-      margin-top: 30px;
-    }
-
-    .output-item {
-      background: rgba(0, 0, 0, 0.5);
-      border-left: 3px solid #00ffcc;
-      padding: 12px;
-      font-family: monospace;
-      color: #eee;
-      margin-bottom: 10px;
-      border-radius: 0 6px 6px 0;
-    }
-
-    .error-msg {
-      color: #ff3333;
-      background: rgba(255, 50, 50, 0.1);
-      padding: 15px;
-      border: 1px solid rgba(255, 50, 50, 0.3);
-      border-radius: 6px;
-      font-family: monospace;
-      margin-top: 20px;
-      white-space: pre-wrap;
-      word-break: break-all;
-    }
-
-    .flag-output {
-      background: rgba(0, 255, 136, 0.1);
-      border: 1px solid rgba(0, 255, 136, 0.4);
-      color: #00ff88;
-      font-weight: bold;
-      font-size: 18px;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-      margin-top: 30px;
-      box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
-      animation: pulseFlag 2s infinite alternate;
-    }
-
-    @keyframes pulseFlag {
-      from {
-        box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
-      }
-
-      to {
-        box-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
-      }
-    }
-
-    .debug-query {
-      margin-top: 20px;
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.4);
-      font-family: monospace;
-    }
-  </style>
-</head>
-
-<body>
-  <nav>
-    <div class="brand">ThreatMapper Labs</div>
-    <a href="/dashboard">← Back to Dashboard</a>
-  </nav>
-
-  <div class="container">
-    <div class="panel">
-      <div class="panel-bg-glow"></div>
-      <h2 class="title">SQL Injection <span>Level: Medium</span></h2>
-
-      <div class="source-block">
-        // Escaped input, without quotes:<br>
-        $id = mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $id);<br>
-        $query = "SELECT * FROM users WHERE user_id = $id;";
-      </div>
-
-      <form method="POST">
-        <div class="form-group">
-          <label for="id">User ID:</label>
-          <input type="text" id="id" name="id" placeholder="Enter User ID (e.g. 1 or 1 OR 1=1)" value="{{ user_id }}"
-            autocomplete="off" autofocus>
+{% extends "_lab_base.html" %}
+{% block title %}SQL Injection Lab (Medium){% endblock %}
+{% block content %}
+<div class="lab-header">
+    <div class="lab-icon">🗄️</div>
+    <div class="lab-title">
+        <h1>SQL Injection</h1>
+        <div class="lab-meta">
+            <span class="badge badge-med">Medium</span>
+            <span class="badge badge-vuln">SQLi</span>
         </div>
-        <button type="submit">Submit Query</button>
-      </form>
-
-      {% if query %}
-      <div class="debug-query">
-        Executed Query: <span style="color:#00ffcc;">{{ query }}</span>
-      </div>
-      {% endif %}
-
-      {% if error %}
-      <div class="error-msg">
-        {{ error }}
-      </div>
-      {% endif %}
-
-      {% if results %}
-      <div class="output-area">
-        <h3 style="font-size: 14px; color: #aaa; margin-bottom: 12px; text-transform: uppercase;">Query Results</h3>
-        {% for r in results %}
-        <div class="output-item">
-          {% if r.name %}
-          <b>Name:</b> {{ r.name }}<br>
-          <b>Age:</b> {{ r.age }}<br>
-          <b>Email:</b> {{ r.email }}<br>
-          <b>Mobile Number:</b> {{ r.mobile }}<br>
-          <b>ATM Passwd:</b> {{ r.atm_pass }}<br>
-          <b>Bank Account:</b> {{ r.bank_acc }}<br>
-          <b>Amount in Bank:</b> {{ r.amount }}<br>
-          {% else %}
-          {% for k, v in r.items() %}
-             <b>{{ k }}:</b> {{ v }}<br>
-          {% endfor %}
-          {% endif %}
-        </div>
-        {% endfor %}
-      </div>
-      {% endif %}
-
-      {% if flag_output %}
-      <div class="flag-output">
-        DATA: {{ flag_output }}
-      </div>
-      {% endif %}
-
     </div>
-  </div>
-</body>
-
-</html>
+</div>
+<div class="panel">
+    <div class="panel-title">🎯 Objective</div>
+    <div class="warn-box">
+        Single quotes are now escaped in the username field. However, the application has added a numeric <strong>User ID</strong> dropdown.
+        Try injecting into the User ID field (e.g., <code>1 OR 1=1</code> or a UNION payload).
+    </div>
+    <div class="hint-block">
+        💡 Hint for User ID: <code>1 OR 1=1</code> &nbsp;|&nbsp; <code>1 UNION SELECT 1,2,3,4--</code>
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-title">⚡ Medium — Single Quote Escaped</div>
+    {% if query_display %}
+    <div class="query-box">{{ query_display }}</div>
+    {% endif %}
+    <form method="POST">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Username (quotes escaped)</label>
+                <input type="text" name="username" placeholder="alice" value="{{ request.form.get('username','') }}">
+            </div>
+            <div class="form-group">
+                <label>User ID (numeric — injectable)</label>
+                <input type="text" name="user_id" placeholder="e.g. 1 OR 1=1" value="{{ request.form.get('user_id','') }}">
+            </div>
+        </div>
+        <button type="submit" class="btn">Search</button>
+    </form>
+    {% if results %}
+    <div style="margin-top:20px;">
+        <div class="panel-title">Query Results ({{ results|length }} row(s))</div>
+        <table class="results-table">
+            <tr><th>ID</th><th>Username</th><th>Password</th><th>Role</th></tr>
+            {% for u in results %}
+            <tr>
+                <td>{{ u.id }}</td>
+                <td style="color:var(--accent2);">{{ u.username }}</td>
+                <td style="color:var(--orange); font-family:'JetBrains Mono',monospace;">{{ u.password }}</td>
+                <td><span class="diff-badge {% if u.role == 'admin' %}diff-high{% else %}diff-low{% endif %}">{{ u.role }}</span></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% elif query_display %}
+    <div style="margin-top:16px; color:var(--dim); font-size:13px;">No results found.</div>
+    {% endif %}
+    {% if flag_output %}
+    <div class="flag-output">🚩 FLAG: {{ flag_output }}</div>
+    {% endif %}
+</div>
+{% endblock %}

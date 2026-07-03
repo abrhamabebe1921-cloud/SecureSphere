@@ -1,5 +1,0 @@
-User-agent: *
-Disallow: /admin/
-Disallow: /logs.txt
-Disallow: /secret_api_keys/
-Disallow: /private_info/

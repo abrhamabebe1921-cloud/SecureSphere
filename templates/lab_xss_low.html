@@ -4,22 +4,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XSS Lab (Low) — ThreatMapper</title>
+    <title>XSS Lab (Low) — SecureSphere Labs</title>
     <style>
-        body {
-            background-color: #050510;
-            color: #fff;
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            position: relative;
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap');
+
+        :root {
+            --bg: #00040e;
+            --border: rgba(0, 140, 255, 0.3);
+            --accent: #00aaff;
+            --accent2: #00ffff;
+            --green: #00ff88;
+            --red: #ff3355;
+            --text: #c9d8f0;
+            --dim: #4a6080;
         }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: radial-gradient(ellipse at 70% 10%, rgba(0, 50, 180, 0.20) 0%, transparent 55%),
+                radial-gradient(ellipse at 20% 80%, rgba(0, 20, 60, 0.25) 0%, transparent 55%),
+                var(--bg);
+        }
         /* Custom Alert Overlay */
         .tm-alert-overlay {
             display: none;
@@ -33,7 +54,7 @@
         }
 
         .tm-alert-box {
-            background: rgba(10, 10, 15, 0.95);
+            background: rgba(0, 12, 28, 0.95);
             border: 2px solid #00ff88;
             border-radius: 8px;
             padding: 30px 40px;
@@ -45,15 +66,8 @@
         }
 
         @keyframes alertPop {
-            0% {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .tm-alert-box h2 {
@@ -73,8 +87,8 @@
         .tm-alert-msg {
             display: block;
             margin: 10px 0 25px 0;
-            color: #00ffcc;
-            font-family: monospace;
+            color: #00ffff;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 18px;
             word-break: break-all;
             background: rgba(0, 255, 136, 0.1);
@@ -100,203 +114,212 @@
             box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/2/2a/Parco_dell%27universit%C3%A0_di_addis_abeba%2C_09.jpg');
-            background-size: cover;
-            background-position: center;
-            filter: blur(16px) brightness(0.4) saturate(1.8);
-            z-index: -2;
-            transform: scale(1.05);
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.95)), linear-gradient(135deg, rgba(255, 106, 0, 0.1) 0%, rgba(0, 255, 136, 0.1) 100%);
-            z-index: -1;
-            pointer-events: none;
-        }
-
         nav {
-            width: 100%;
             height: 60px;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 8, 20, 0.85);
+            border-bottom: 1px solid var(--border);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
-            padding: 0 30px;
-            box-sizing: border-box;
-            gap: 20px;
+            padding: 0 28px;
+            gap: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        nav a {
-            color: #fff;
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             text-decoration: none;
-            font-weight: 500;
-            font-size: 14px;
-            transition: color 0.3s;
+        }
+
+        .nav-logo img {
+            width: 36px;
+            height: 36px;
+            filter: drop-shadow(0 0 8px rgba(0, 170, 255, 0.6));
+        }
+
+        .nav-brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-back {
+            margin-left: auto;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border: 1px solid rgba(0, 170, 255, 0.3);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-back:hover {
+            background: rgba(0, 170, 255, 0.1);
+            border-color: var(--accent2);
+        }
+
+        .page {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 36px 20px 60px;
+        }
+
+        .lab-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .lab-icon {
+            width: 52px;
+            height: 52px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, rgba(0, 80, 200, 0.3), rgba(0, 200, 255, 0.15));
+            border: 1px solid rgba(0, 170, 255, 0.4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .lab-title h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent2);
+        }
+
+        .lab-meta {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 3px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .badge-low { background: rgba(0, 255, 136, 0.12); color: var(--green); border: 1px solid rgba(0, 255, 136, 0.3); }
+        .badge-xss { background: rgba(255, 204, 0, 0.12); color: #ffcc00; border: 1px solid rgba(255, 204, 0, 0.3); }
+
+        .panel {
+            background: rgba(0, 12, 28, 0.7);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 26px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(12px);
+        }
+        
+        .panel-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            color: var(--dim);
+            text-transform: uppercase;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-
-        nav a:hover {
-            color: #ffaa00;
+        .panel-title::after {
+            content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent);
         }
 
-        .brand {
-            font-size: 18px;
-            font-weight: 700;
-            background: linear-gradient(90deg, #ff6a00, #ffaa00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-right: auto;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 800px;
-            margin-top: 60px;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .panel {
-            background: rgba(10, 10, 15, 0.7);
-            backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-            position: relative;
-        }
-
-        .panel-bg-glow {
-            position: absolute;
-            top: -20px;
-            left: -20px;
-            right: -20px;
-            bottom: -20px;
-            background: radial-gradient(circle at 50% top, rgba(255, 106, 0, 0.15), transparent 70%);
-            z-index: -1;
-            border-radius: 12px;
-        }
-
-        .title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #ffaa00;
-            margin-top: 0;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .title span {
-            font-size: 12px;
-            padding: 4px 8px;
-            background: rgba(255, 50, 50, 0.2);
-            border: 1px solid rgba(255, 50, 50, 0.5);
-            border-radius: 4px;
-            color: #ff3333;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .source-block {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        .info-box {
+            background: rgba(0, 100, 200, 0.07);
+            border: 1px solid rgba(0, 140, 255, 0.2);
+            border-left: 3px solid var(--accent);
             border-radius: 8px;
-            padding: 15px;
-            font-family: monospace;
-            color: #aaa;
-            font-size: 12px;
-            margin-bottom: 30px;
+            padding: 14px 16px;
+            font-size: 13px;
+            line-height: 1.7;
+            color: rgba(200, 220, 255, 0.8);
+            margin-bottom: 18px;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
-
         .form-group label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #ccc;
+            font-size: 12px;
+            color: var(--dim);
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
         }
-
         .form-group input {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #00ffcc;
-            font-family: monospace;
-            padding: 14px;
-            border-radius: 6px;
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0, 20, 50, 0.6);
+            border: 2px solid rgba(0, 140, 255, 0.35);
+            border-radius: 8px;
+            color: var(--accent2);
+            font-family: 'JetBrains Mono', monospace;
             font-size: 16px;
-            transition: all 0.3s;
             outline: none;
+            transition: all 0.2s;
         }
-
         .form-group input:focus {
-            border-color: #ffaa00;
-            box-shadow: 0 0 15px rgba(255, 170, 0, 0.2);
+            border-color: var(--accent2);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.15);
         }
 
-        button {
-            background: linear-gradient(135deg, #ff6a00 0%, #ffaa00 100%);
-            color: #111;
-            font-weight: bold;
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #0055ff, #00aaff);
+            color: #fff;
+            font-weight: 700;
             border: none;
-            padding: 14px 24px;
-            border-radius: 6px;
+            border-radius: 8px;
+            font-size: 14px;
             cursor: pointer;
-            font-size: 15px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 85, 255, 0.3);
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
         }
-
-        button:hover {
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(255, 170, 0, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 170, 255, 0.4);
         }
 
-        .output-area {
-            margin-top: 30px;
-        }
-
-        .output-item {
+        .output-box {
             background: rgba(0, 0, 0, 0.5);
-            border-left: 3px solid #00ffcc;
-            padding: 12px;
-            font-family: monospace;
+            border-left: 3px solid var(--accent2);
+            padding: 12px 16px;
+            font-family: 'JetBrains Mono', monospace;
             color: #eee;
-            margin-bottom: 10px;
-            border-radius: 0 6px 6px 0;
-        }
-
-        .error-msg {
-            color: #ff3333;
-            background: rgba(255, 50, 50, 0.1);
-            padding: 15px;
-            border: 1px solid rgba(255, 50, 50, 0.3);
-            border-radius: 6px;
-            font-family: monospace;
             margin-top: 20px;
-            white-space: pre-wrap;
-            word-break: break-all;
+            border-radius: 0 6px 6px 0;
+            word-wrap: break-word;
         }
 
         .flag-output {
             background: rgba(0, 255, 136, 0.1);
             border: 1px solid rgba(0, 255, 136, 0.4);
-            color: #00ff88;
+            color: var(--green);
             font-weight: bold;
             font-size: 18px;
             padding: 20px;
@@ -306,44 +329,14 @@
             box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
             animation: pulseFlag 2s infinite alternate;
         }
-
         @keyframes pulseFlag {
-            from {
-                box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
-            }
-
-            to {
-                box-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
-            }
+            from { box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
+            to { box-shadow: 0 0 40px rgba(0, 255, 136, 0.5); }
         }
 
-        .debug-query {
-            margin-top: 20px;
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.4);
-            font-family: monospace;
-        }
-
-        /* Override button for logout */
-        .btn-logout {
-            background: rgba(255, 50, 50, 0.2);
-            color: #ff3333;
-            border: 1px solid rgba(255, 50, 50, 0.5);
-            padding: 8px 16px;
-            font-size: 13px;
-            display: inline-block;
-            text-decoration: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: auto;
-        }
-
-        .btn-logout:hover {
-            background: rgba(255, 50, 50, 0.4);
-            transform: none;
-            box-shadow: none;
-        }
+        table.users { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; }
+        table.users th { padding: 10px; background: rgba(0,140,255,0.1); color: var(--accent); text-align: left; }
+        table.users td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
     </style>
     <script>
         // Intercept native alert to display it beautifully (and bypass iframe blocks)
@@ -353,191 +346,99 @@
         };
     </script>
 </head>
-
 <body>
-    <!-- Custom Alert HTML -->
     <div class="tm-alert-overlay" id="tmAlertOverlay">
         <div class="tm-alert-box">
             <h2>⚠️ XSS Executed</h2>
             <p>JavaScript <code>alert()</code> called with:</p>
             <code class="tm-alert-msg" id="tmAlertMessage"></code>
-            <button class="tm-alert-btn"
-                onclick="document.getElementById('tmAlertOverlay').style.display='none'">Dismiss</button>
+            <button class="tm-alert-btn" onclick="document.getElementById('tmAlertOverlay').style.display='none'">Dismiss</button>
         </div>
     </div>
 
     <nav>
-        <div class="brand">ThreatMapper Labs</div>
-        <a href="/dashboard">← Back to Dashboard</a>
+        <a href="/dashboard" class="nav-logo">
+            <img src="https://cdn-icons-png.flaticon.com/512/2716/2716612.png" alt="Defence Logo">
+            <span class="nav-brand">SecureSphere Labs</span>
+        </a>
+        <a href="/dashboard" class="nav-back">← Dashboard</a>
     </nav>
 
-    <div class="container">
+    <div class="page">
+        <div class="lab-header">
+            <div class="lab-icon">🕷️</div>
+            <div class="lab-title">
+                <h1>Cross-Site Scripting (XSS) - Reflected</h1>
+                <div class="lab-meta">
+                    <span class="badge badge-low">Low</span>
+                    <span class="badge badge-xss">Injection</span>
+                </div>
+            </div>
+        </div>
+
+        {% if not logged_in_user %}
         <div class="panel">
-            <div class="panel-bg-glow"></div>
-            <h2 class="title">Cross-Site Scripting (XSS) - Reflected <span>Level: Low</span></h2>
+            <div class="panel-title">🎯 Objective</div>
+            <div class="info-box">
+                Exploit the Reflected XSS vulnerability to execute JavaScript in the browser.
+                Use any of the valid lab credentials below to begin.
+            </div>
 
-            {% if not logged_in_user %}
-            <p style="color: #aaa; margin-bottom: 20px; line-height: 1.6;">
-                <strong>Lab Objective:</strong> Exploit the Reflected XSS vulnerability to execute JavaScript in the
-                browser. <br>
-                Use any of the valid lab credentials below to begin:
-            </p>
-
-            <div
-                style="margin-bottom:30px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; max-width: 500px; margin-left: auto; margin-right: auto;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr>
-                            <th
-                                style="padding:10px 15px; text-align:left; background: rgba(255,204,0,0.1); color: #ffcc00; font-size: 12px; text-transform: uppercase;">
-                                Username</th>
-                            <th
-                                style="padding:10px 15px; text-align:left; background: rgba(255,204,0,0.1); color: #ffcc00; font-size: 12px; text-transform: uppercase;">
-                                Password</th>
-                            <th
-                                style="padding:10px 15px; text-align:left; background: rgba(255,204,0,0.1); color: #ffcc00; font-size: 12px; text-transform: uppercase;">
-                                Role</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if available_users %}
-                        {% for u, details in available_users.items() %}
-                        <tr>
-                            <td
-                                style="padding:10px 15px; border-top: 1px solid rgba(255,255,255,0.1); font-family: monospace; color: #fff;">
-                                {{ u }}</td>
-                            <td
-                                style="padding:10px 15px; border-top: 1px solid rgba(255,255,255,0.1); font-family: monospace; color: #ffaa00;">
-                                {{ details.pass }}</td>
-                            <td style="padding:10px 15px; border-top: 1px solid rgba(255,255,255,0.1); font-size:13px;">
-                                {% if details.role == 'Admin' %}
-                                <span
-                                    style="color:#ff3333; font-weight:bold; background:rgba(255,50,50,0.1); padding:2px 6px; border-radius:3px;">Admin</span>
-                                {% else %}
-                                <span
-                                    style="color:#00ffcc; background:rgba(0,255,204,0.1); padding:2px 6px; border-radius:3px;">User</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
+            <table class="users">
+                <tr><th>Username</th><th>Password</th><th>Role</th></tr>
+                {% for u, details in available_users.items() %}
+                <tr>
+                    <td>{{ u }}</td>
+                    <td style="color:var(--accent2); font-family:monospace;">{{ details.pass }}</td>
+                    <td>
+                        {% if details.role == 'Admin' %}
+                        <span style="color:#ff3333; background:rgba(255,50,50,0.1); padding:2px 6px; border-radius:3px;">Admin</span>
+                        {% else %}
+                        <span style="color:#00ffcc; background:rgba(0,255,204,0.1); padding:2px 6px; border-radius:3px;">User</span>
                         {% endif %}
-                    </tbody>
-                </table>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            
+            <div style="display:flex; gap:12px; margin-bottom:20px;">
+                <a href="?quick=Abreham" class="btn" style="flex:1;">🔑 Create Admin Session (Abreham)</a>
+                <a href="?quick=Natty" class="btn" style="background:linear-gradient(135deg, #008855, #00cc88); flex:1;">👤 Create User Session (Natty)</a>
             </div>
 
-
-            <!-- ONE-CLICK ROLE BUTTONS -->
-            <div style="margin-bottom:30px; text-align: center;">
-                <div
-                    style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;">
-                    ⚡ One-Click Session Creator — Generates unique server-side sessions</div>
-                <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;">
-                    <a href="?quick=Hermela"
-                        style="display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.4);border-radius:10px;color:#ff5555;font-weight:700;font-size:13px;text-decoration:none;transition:all 0.2s;"
-                        onmouseover="this.style.background='rgba(255,50,50,0.2)'"
-                        onmouseout="this.style.background='rgba(255,50,50,0.1)'">
-                        🔑 Create Admin Session (Hermela)
-                        <span
-                            style="font-size:9px;opacity:0.6;background:rgba(0,0,0,0.3);padding:1px 4px;border-radius:3px;">role=Admin</span>
-                    </a>
-                    <a href="?quick=Abreham"
-                        style="display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:rgba(0,255,204,0.08);border:1px solid rgba(0,255,204,0.3);border-radius:10px;color:#00ffcc;font-weight:700;font-size:13px;text-decoration:none;transition:all 0.2s;"
-                        onmouseover="this.style.background='rgba(0,255,204,0.18)'"
-                        onmouseout="this.style.background='rgba(0,255,204,0.08)'">
-                        👤 Create User Session (Abreham)
-                        <span
-                            style="font-size:9px;opacity:0.6;background:rgba(0,0,0,0.3);padding:1px 4px;border-radius:3px;">role=User</span>
-                    </a>
-                </div>
-
-                <!-- Live cookie status -->
-                <div id="xss-cookie-status"
-                    style="margin:0 auto; max-width:480px; font-family:'JetBrains Mono',monospace;font-size:11px;padding:12px 16px;background:rgba(0,0,0,0.4);border-radius:8px;border:1px solid rgba(255,255,255,0.08);color:#555;line-height:1.6;text-align:left;">
-                    Checking browser session status…
-                </div>
-            </div>
-
-            <script>
-                (function () {
-                    function readCookie(n) { var v = document.cookie.match('(^|;)\\s*' + n + '\\s*=\\s*([^;]+)'); return v ? decodeURIComponent(v.pop()) : null; }
-                    function updateXssStatus() {
-                        var el = document.getElementById('xss-cookie-status');
-                        if (!el) return;
-                        var sid = readCookie('XSS_SESSION_ID');
-                        if (sid) {
-                            el.innerHTML = '<span style="color:#00ff88;">●</span> <code style="color:#ffaa00;">XSS_SESSION_ID</code> cookie: <strong style="color:#fff;">' + sid + '</strong><br>'
-                                + '<span style="color:#444; font-size:10px;">This token is mapped server-side to a specific user and role. Access to this cookie allows full account takeover.</span>';
-                        } else {
-                            el.innerHTML = '<span style="color:#444;">○</span> No <code style="color:#888;">XSS_SESSION_ID</code> found. Please create a session above.';
-                        }
-                    }
-                    updateXssStatus();
-                    setInterval(updateXssStatus, 2000);
-                })();
-            </script>
-
-            <div
-                style="display:flex;align-items:center;gap:12px;margin-bottom:25px; max-width: 400px; margin-left: auto; margin-right: auto;">
-                <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
-                <span style="font-size:11px;color:#444;text-transform:uppercase;letter-spacing:1px;">or login
-                    manually</span>
-                <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
-            </div>
-
-            {% if error %}
-            <div class="error-msg">{{ error }}</div>
-            {% endif %}
-
-            <form method="POST" style="max-width: 400px; margin: 0 auto;">
+            <form method="POST">
                 <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" placeholder="e.g. Hermela" autocomplete="off"
-                        autofocus>
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Username" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" placeholder="Passwd">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="••••••••" required>
                 </div>
-                <button type="submit" style="width: 100%;">Create Session</button>
+                <button type="submit" class="btn" style="width:100%;">Create Session</button>
             </form>
+            {% if error %}
+            <div style="color:var(--red); padding:10px; margin-top:10px;">{{ error }}</div>
+            {% endif %}
+        </div>
+        {% else %}
 
-            {% else %}
-
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 20px;">
+        <div class="panel">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                 <div>
-                    <h3 style="margin: 0 0 5px 0; color: #fff;">XSS Simulation — Active Session</h3>
-                    <div style="font-size:13px; color: #aaa;">Current User: <strong style="color:#00ffcc;">{{
-                            logged_in_user }}</strong></div>
+                    <h3 style="margin-bottom: 5px;">Active Session</h3>
+                    <div style="font-size:13px; color:var(--dim);">Current User: <strong style="color:var(--accent2);">{{ logged_in_user }}</strong></div>
                 </div>
-                <form method="POST" style="margin:0;">
+                <form method="POST">
                     <input type="hidden" name="logout" value="1">
-                    <button type="submit" class="btn-logout" style="padding: 6px 14px; font-size:11px;">Destroy
-                        Session</button>
+                    <button type="submit" class="btn" style="padding: 6px 14px; background: rgba(255,50,50,0.2); color:#ff3333; border: 1px solid rgba(255,50,50,0.5); font-size:12px;">Destroy Session</button>
                 </form>
             </div>
+        </div>
 
-            <!-- ACTIVE COOKIE STATUS IN AUTH VIEW -->
-            <div id="xss-cookie-status-auth"
-                style="margin-bottom:20px; font-family:'JetBrains Mono',monospace;font-size:11px;padding:12px;background:rgba(0,0,0,0.3);border-radius:6px;border:1px solid rgba(0,255,204,0.12);line-height:1.5;">
-                Checking cookies…
-            </div>
-            <script>
-                (function () {
-                    function readCookie(n) { var v = document.cookie.match('(^|;)\\s*' + n + '\\s*=\\s*([^;]+)'); return v ? decodeURIComponent(v.pop()) : null; }
-                    function updateXssStatusAuth() {
-                        var el = document.getElementById('xss-cookie-status-auth');
-                        if (!el) return;
-                        var sid = readCookie('XSS_SESSION_ID');
-                        if (sid) {
-                            el.innerHTML = '<span style="color:#00ff88;">●</span> Opaque Session Token: <code style="color:#ffaa00;">' + sid + '</code><br>'
-                                + '<span style="color:#555; font-size:10px;">Vulnerability: <code>httponly=False</code>. Steal this with: <code>&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code></span>';
-                        }
-                    }
-                    updateXssStatusAuth();
-                })();
-            </script>
-
-            <div class="source-block">
+        <div class="panel">
+            <div class="panel-title">Payload Execution</div>
+            <div class="info-box" style="font-family:monospace; font-size:11px;">
                 // Vulnerable backend logic simulation:<br>
                 if( array_key_exists( "name", $_GET ) && $_GET[ 'name' ] != NULL ) {<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;echo '&lt;pre&gt;Hello ' . $_GET[ 'name' ] . '&lt;/pre&gt;';<br>
@@ -546,20 +447,15 @@
 
             <form method="GET">
                 <div class="form-group">
-                    <label for="name">What's your name?</label>
-                    <input type="text" id="name" name="name" placeholder="Enter your name..."
-                        value="{{ name if name else '' }}" autocomplete="off" autofocus>
+                    <label>What's your name?</label>
+                    <input type="text" name="name" value="{{ name if name else '' }}" placeholder="Enter your name...">
                 </div>
-                <button type="submit">Submit</button>
+                <button type="submit" class="btn">Submit</button>
             </form>
 
             {% if name %}
-            <div class="output-area">
-                <h3 style="font-size: 14px; color: #aaa; margin-bottom: 12px; text-transform: uppercase;">Hello Message
-                </h3>
-                <div class="output-item" style="font-family: inherit;">
-                    <pre>Hello {{ name | safe }}</pre>
-                </div>
+            <div class="output-box">
+                Hello {{ name | safe }}
             </div>
             {% endif %}
 
@@ -568,15 +464,9 @@
                 DATA: {{ flag_output }}
             </div>
             {% endif %}
-
-            {% endif %}
-
         </div>
+
+        {% endif %}
     </div>
-
-    <script>
-        // In case the payload executes on page load, the alert will be caught by the overridden window.alert function in the head.
-    </script>
 </body>
-
 </html>

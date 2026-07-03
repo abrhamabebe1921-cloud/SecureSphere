@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload (Low) — SecureSphere Labs</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap');
+
+        :root {
+            --bg: #00040e;
+            --border: rgba(0, 140, 255, 0.3);
+            --accent: #00aaff;
+            --accent2: #00ffff;
+            --green: #00ff88;
+            --red: #ff3355;
+            --text: #c9d8f0;
+            --dim: #4a6080;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: radial-gradient(ellipse at 60% 0%, rgba(0, 60, 180, 0.18) 0%, transparent 55%),
+                radial-gradient(ellipse at 10% 90%, rgba(0, 20, 60, 0.25) 0%, transparent 55%),
+                var(--bg);
+        }
+
+        nav {
+            height: 60px;
+            background: rgba(0, 8, 20, 0.85);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            padding: 0 28px;
+            gap: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            width: 36px;
+            height: 36px;
+            filter: drop-shadow(0 0 8px rgba(0, 170, 255, 0.6));
+        }
+
+        .nav-brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-back {
+            margin-left: auto;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border: 1px solid rgba(0, 170, 255, 0.3);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-back:hover {
+            background: rgba(0, 170, 255, 0.1);
+            border-color: var(--accent2);
+        }
+
+        .page {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 36px 20px 60px;
+        }
+
+        .lab-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .lab-icon {
+            width: 52px;
+            height: 52px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, rgba(0, 80, 200, 0.3), rgba(0, 200, 255, 0.15));
+            border: 1px solid rgba(0, 170, 255, 0.4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.15);
+        }
+
+        .lab-title h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent2);
+        }
+
+        .lab-meta {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 3px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .badge-low {
+            background: rgba(0, 255, 136, 0.12);
+            color: var(--green);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .badge-upload {
+            background: rgba(255, 100, 0, 0.12);
+            color: #ff8844;
+            border: 1px solid rgba(255, 100, 0, 0.3);
+        }
+
+        .badge-owasp {
+            background: rgba(255, 160, 0, 0.10);
+            color: #ffaa44;
+            border: 1px solid rgba(255, 160, 0, 0.25);
+        }
+
+        .panel {
+            background: rgba(0, 12, 28, 0.7);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 26px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(12px);
+        }
+
+        .panel-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            color: var(--dim);
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border), transparent);
+        }
+
+        .info-box {
+            background: rgba(0, 100, 200, 0.07);
+            border: 1px solid rgba(0, 140, 255, 0.2);
+            border-left: 3px solid var(--accent);
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 13px;
+            line-height: 1.7;
+            color: rgba(200, 220, 255, 0.8);
+            margin-bottom: 18px;
+        }
+
+        .info-box strong {
+            color: var(--accent2);
+        }
+
+        .info-box code {
+            background: rgba(0, 170, 255, 0.1);
+            border: 1px solid rgba(0, 170, 255, 0.2);
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--accent2);
+        }
+
+        .upload-zone {
+            background: rgba(0, 20, 50, 0.5);
+            border: 2px dashed rgba(0, 140, 255, 0.35);
+            border-radius: 10px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-zone:hover {
+            background: rgba(0, 40, 90, 0.5);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.12);
+        }
+
+        .upload-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .upload-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            font-size: 13px;
+            color: var(--dim);
+        }
+
+        .upload-text strong {
+            color: var(--accent);
+        }
+
+        #fname {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--green);
+            margin-top: 8px;
+        }
+
+        .btn-upload {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #0050aa, #0088ee);
+            color: #fff;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 80, 180, 0.3);
+            margin-top: 16px;
+        }
+
+        .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 130, 255, 0.4);
+        }
+
+        .result-ok {
+            margin-top: 20px;
+            padding: 12px 16px;
+            background: rgba(0, 255, 136, 0.07);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 8px;
+            color: var(--green);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        .result-err {
+            margin-top: 20px;
+            padding: 12px 16px;
+            background: rgba(255, 50, 80, 0.07);
+            border: 1px solid rgba(255, 50, 80, 0.3);
+            border-radius: 8px;
+            color: var(--red);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        .uploaded-preview {
+            margin-top: 16px;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 140, 255, 0.2);
+            border-radius: 8px;
+        }
+
+        .uploaded-preview a {
+            color: var(--accent2);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        .uploaded-preview a:hover {
+            text-decoration: underline;
+        }
+
+        .danger-box {
+            background: rgba(255, 50, 0, 0.08);
+            border: 1px solid rgba(255, 80, 30, 0.25);
+            border-left: 3px solid #ff6633;
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 13px;
+            line-height: 1.7;
+            color: rgba(255, 200, 180, 0.85);
+            margin-bottom: 18px;
+        }
+
+        .danger-box strong {
+            color: #ff8855;
+        }
+
+        .danger-box code {
+            background: rgba(255, 100, 0, 0.12);
+            border: 1px solid rgba(255, 100, 0, 0.2);
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #ffaa66;
+        }
+
+        .defence-tip {
+            background: rgba(0, 80, 30, 0.2);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-left: 3px solid var(--green);
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 13px;
+            line-height: 1.7;
+            color: rgba(180, 255, 200, 0.8);
+        }
+
+        .defence-tip strong {
+            color: var(--green);
+        }
+
+        .defence-tip code {
+            background: rgba(0, 255, 136, 0.08);
+            border: 1px solid rgba(0, 255, 136, 0.15);
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="/dashboard" class="nav-logo">
+            <img src="https://cdn-icons-png.flaticon.com/512/2716/2716612.png" alt="Defence Logo">
+            <span class="nav-brand">SecureSphere Labs</span>
+        </a>
+        <a href="/dashboard" class="nav-back">← Dashboard</a>
+    </nav>
+
+    <div class="page">
+        <div class="lab-header">
+            <div class="lab-icon">📁</div>
+            <div class="lab-title">
+                <h1>Unrestricted File Upload</h1>
+                <div class="lab-meta">
+                    <span class="badge badge-low">Low</span>
+                    <span class="badge badge-upload">File Upload · A04:2021</span>
+                    <span class="badge badge-owasp">OWASP Top 10</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">🎯 Objective</div>
+            <div class="info-box">
+                <strong>What is Unrestricted File Upload?</strong><br>
+                When an application allows users to upload files without validating the type, extension,
+                or content, an attacker can upload a malicious file (e.g. a PHP web shell).
+                If the server also serves the uploaded file, the attacker can execute arbitrary commands.<br><br>
+                <strong>Goal:</strong> Upload any file type (try <code>.php</code>, <code>.html</code>,
+                or a script) — this Low level applies <strong>no restriction whatsoever</strong>.
+                Notice that the file is stored and accessible via a direct URL.
+            </div>
+
+            <div class="panel-title" style="margin-top:16px;">⚠️ Attack Scenario</div>
+            <div class="danger-box" style="margin-bottom:18px;">
+                <strong>Example Web Shell Upload:</strong><br>
+                Create a file <code>shell.php</code> containing:<br><br>
+                <code>&lt;?php system($_GET['cmd']); ?&gt;</code><br><br>
+                After upload, navigate to the returned URL and append <code>?cmd=ls</code> or
+                <code>?cmd=cat /etc/passwd</code> to execute arbitrary OS commands on the server.
+            </div>
+
+            <div class="panel-title" style="margin-top:16px;">💻 Vulnerable Source Code</div>
+            <pre
+                style="background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 15px; font-family: monospace; color: #aaa; font-size: 12px; margin-bottom: 0px; overflow-x: auto; white-space: pre; line-height: 1.5;">&lt;?php
+
+if( isset( $_POST[ 'Upload' ] ) ) {
+    // Where are we going to be writing to?
+    $target_path  = DVWA_WEB_PAGE_TO_ROOT . "hackable/uploads/";
+    $target_path .= basename( $_FILES[ 'uploaded' ][ 'name' ] );
+
+    // Can we move the file to the upload folder?
+    if( !move_uploaded_file( $_FILES[ 'uploaded' ][ 'tmp_name' ], $target_path ) ) {
+        // No
+        echo '&lt;pre&gt;Your image was not uploaded.&lt;/pre&gt;';
+    }
+    else {
+        // Yes!
+        echo "&lt;pre&gt;{$target_path} succesfully uploaded!&lt;/pre&gt;";
+    }
+}
+
+?&gt;</pre>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">📤 Upload Any File</div>
+
+            <form method="POST" enctype="multipart/form-data">
+                <div class="upload-zone" id="dropZone">
+                    <input type="file" name="uploaded" id="fileInput"
+                        onchange="document.getElementById('fname').textContent = this.files[0]?.name || ''">
+                    <div class="upload-icon">📂</div>
+                    <div class="upload-text">
+                        <strong>Click to select a file</strong> — any extension allowed!
+                    </div>
+                    <div id="fname"></div>
+                </div>
+
+                <button type="submit" name="Upload" value="Upload" class="btn-upload">
+                    ⬆ Upload File
+                </button>
+            </form>
+
+            {% if message %}
+            {% if uploaded_url %}
+            <div class="result-ok">
+                ✅ {{ message }}<br>
+                Direct URL: <a href="{{ uploaded_url }}" target="_blank">{{ uploaded_url }}</a>
+            </div>
+            {% else %}
+            <div class="result-err">❌ {{ message }}</div>
+            {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">🛡️ How To Defend</div>
+            <div class="defence-tip">
+                <strong>Secure File Upload Checklist:</strong><br>
+                • Accept only whitelisted extensions: <code>jpg, jpeg, png, gif, pdf</code><br>
+                • Validate MIME type by reading magic bytes (not just <code>$_FILES['type']</code>)<br>
+                • Rename the file server-side to a random UUID — never trust the original filename<br>
+                • Store uploads <strong>outside the web root</strong> and serve through a proxy script<br>
+                • Scan uploaded files with an antivirus / ClamAV integration<br>
+                • Set a strict <code>Content-Type</code> header and never execute uploaded files
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

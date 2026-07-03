@@ -52,12 +52,12 @@ def init_db():
     existing = c.execute('SELECT COUNT(*) FROM users').fetchone()[0]
     if existing == 0:
         users = [
-            ('admin', 'admin@aau.edu.et', hash_password('1234'), 'admin'),
-            ('analyst', 'analyst@aau.edu.et', hash_password('1234'), 'analyst'),
-            ('developer', 'dev@aau.edu.et', hash_password('1234'), 'developer'),
-            ('user', 'user@aau.edu.et', hash_password('1234'), 'user'),
-            ('abebe', 'abebe@aau.edu.et', hash_password('1234'), 'admin'),
-            ('kebede', 'kebede@aau.edu.et', hash_password('1234'), 'user'),
+            ('admin', 'abc@gmail.com', hash_password('1234'), 'admin'),
+            ('analyst', 'analyst@eacasummit.com', hash_password('1234'), 'analyst'),
+            ('developer', 'dev@eacasummit.com', hash_password('1234'), 'developer'),
+            ('user', 'user@eacasummit.com', hash_password('1234'), 'user'),
+            ('abebe', 'abebe@eacasummit.com', hash_password('1234'), 'admin'),
+            ('kebede', 'kebede@eacasummit.com', hash_password('1234'), 'user'),
         ]
         c.executemany('INSERT INTO users (username, email, password, role) VALUES (?,?,?,?)', users)
         conn.commit()
